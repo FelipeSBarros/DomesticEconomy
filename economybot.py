@@ -10,20 +10,18 @@ import json
 import requests
 from API import API # bot API
 import time
-import urllib #to handle with pecial characters
-# from dbhelper import DBHelper # import class and method created to work with sqlite3
-from dbZeroEuro import DBHelper
+import urllib # to handle with pecial characters
+import datetime as date # to manage date and time
+from dbZeroEuro import DBHelper # import class and method created to work with sqlite3
 
 TOKEN = API
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 db = DBHelper()
-db.setup()
 
 def get_url(url): # Function to get URL and set encode
     response = requests.get(url)
     content = response.content.decode("utf8")
     return content
-
 
 def get_json_from_url(url): # function the get and return json from URL
     content = get_url(url)
@@ -35,71 +33,13 @@ def get_last_update_id(updates): #Function to calculate and get the last update 
     for update in updates["result"]:
         update_ids.append(int(update["update_id"]))
     return max(update_ids)
-    
-def handle_updates(updates):
-    
-    for update in updates["result"]:
-        try:
-            user = update["message"]["chat"]["first_name"]
-            text = update["message"]["text"]
-            chat = update["message"]["chat"]["id"]
-            cats = db.get_category()
-            #receita = None
-            #items = db.get_items(chat)
-            if text == "/start": 
-                send_message("Welcome to your personal assistent, {}!!".format(user), chat) #confirmar se vai funcionar
-                send_message("I'm organizing everything until we can begin!", chat)
-                db.insertuser(user, chat)
-                send_message("Ok, all done! write /insert to open menu", chat)
-            elif text == "/setup": 
-                send_message("OK, Setting up the data base!!!")
-                db.setup()
-            elif text == "/insert":
-                # Getting action
-                actions = db.get_action()
-                action = build_keyboard(actions)
-                send_message("select what you intend to do: ", chat, action)
-            if text == "receita":
-                send_message("OK, tell me the value of your income:", chat)
-                receita = True
-            
-            try:
-                receita
-            except NameError:
-                send_message("Continue!!", chat)
-            else:
-                if receita:
-                    db.insertIncome(user, int(text))
-                    send_message("OK!!", chat)
-            if text == 'gastos':
-                #Getting catgory
-                #cats = db.get_category()
-                cat = build_keyboard(cats)
-                send_message("select the cathegory: ", chat, cat)
-            if text in cats:
-                db.insertExpenses(user, text, value)
-            #elif text.startswith("/"):
-            #    continue
-            #elif text in items:
-            #    db.delete_item(text, chat)
-            #    items = db.get_items(chat)
-            #    keyboard = build_keyboard(items)
-            #    send_message("select an item to delete: ", chat, keyboard)
-            #else:                
-            #    db.add_item(text, chat)
-            #    items = db.get_items(chat)
-            #    message = "\n".join(items)
-            #    send_message(message, chat)
-        except KeyError:
-            pass
-            
+
 def get_updates(offset=None):
     url = URL + "getUpdates?timeout=100"
     if offset:
         url += "&offset={}".format(offset) #  (in URLs, the argument list strats with ? but further arguments are separated with &).
     js = get_json_from_url(url)
     return js
-
 
 def get_last_chat_id_and_text(updates):
     num_updates = len(updates["result"])
@@ -108,12 +48,15 @@ def get_last_chat_id_and_text(updates):
     chat_id = updates["result"][last_update]["message"]["chat"]["id"]
     return (text, chat_id)
 
-
-def send_message(text, chat_id, reply_markup = None):
+def send_message(text, chat_id, parse_mode = 'markdown', reply_markup = None):
     text = urllib.parse.quote_plus(text)
-    url = URL + "sendMessage?text={}&chat_id={}".format(text, chat_id)
+    url = URL + "sendMessage?text={}&chat_id={}&parse_mode={}".format(text, chat_id, parse_mode)
     if reply_markup:
-        url += "&reply_markup={}".format(reply_markup)
+        url += "reply_markup={}".format(reply_markup)
+    get_url(url)
+    
+def send_action(chat_id, action = 'typing'):
+    url = URL + "sendChatAction?chat_id={}&action={}".format(chat_id, action)
     get_url(url)
     
 def build_keyboard(items):
@@ -121,11 +64,46 @@ def build_keyboard(items):
     reply_markup = {"keyboard" : keyboard, "one_time_keyboard" : True}
     return json.dumps(reply_markup)
     
-def get_doaction(doaction = None):
-    return doaction
+def handle_updates(updates):
     
+    for update in updates["result"]:
+        try:
+            user = update["message"]["chat"]["first_name"]
+            text = update["message"]["text"]
+            chat = update["message"]["chat"]["id"]
+            
+            if text == "/start": 
+                #send_action(chat)
+                send_message("Welcome to Dosmestic Economy Bot! Your personal assistent, {}!!".format(user), chat) #confirmar se vai funcionar
+                #send_action(chat)
+                users = db.get_users()
+                if user not in users:
+                    db.insertuser(user, chat)
+                send_message("Before we can start, a few tips ans tricks: \n *Use:* \n `/insert [value] [category] [subcategory]` \n to insert a expenses, WHERE *value* is a number; \n *Exemple:* \n `/insert Casa Comida 100`", chat)
+                send_action(chat)
+                send_message("To know the *categorys* you cna use, just type `/category` and I send you the options you have. \n The same for *subcategory* (just write `/subcategory`)", chat)
+                
+            elif text[0:7] == "/insert":
+                action, value, category, subcategory = text.split(" ")
+                send_message("Organizing the data {}".format(text), chat)
+                #send_message("Date: {}".format(date.date(date)), chat)
+                db.insertExpenses(user, category, subcategory, int(value), date.date.today())
+                send_message("select Well done! {} inserted as expenses".format(value), chat)
+
+            if text == "/category":
+                cats = db.get_category()
+                #cats = [[cats] for category in cats]
+                send_message("Your options for **category** are:\n\n{}".format('\n'.join(cats)), chat)
+            
+            if text == "/subcategory":
+                subcats = db.get_subcategory()
+                #cats = [[cats] for category in cats]
+                send_message("Your options for **category** are:\n\n{}".format('\n'.join(subcats)), chat)    
+
+        except KeyError:
+            pass
+            
 def main():
-    #db.setup()
     last_update_id = None
     while True:
         print("getting updates")
