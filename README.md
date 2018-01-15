@@ -18,7 +18,7 @@ pip install requests
 
 ### chatbot Functions
 `/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
-![start](img/start.png)
+![start](img/start.png)  
 `/category` will show all categories already registered in the category table;  
 `/subcategory` will do the same for subcategory table;  
 
