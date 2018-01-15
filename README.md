@@ -17,8 +17,8 @@ pip install requests
 * economibot.py is the bot it self;  
 
 ### chatbot Functions
-`/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;
-`/category` will show all categories already registered in the category table;
-`/subcategory` will do the same for subcategory table;
+`/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
+`/category` will show all categories already registered in the category table;  
+`/subcategory` will do the same for subcategory table;  
 
 **NOTE:** The database is note relational yet. I need to work on that too. All data are saved on general table
