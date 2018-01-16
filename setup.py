@@ -43,24 +43,31 @@ conn.execute("insert into category(category) values ('casa');")
 conn.execute("insert into category(category) values ('transporte');")
 conn.execute("insert into category(category) values ('esporte');")
 conn.execute("insert into category(category) values ('saude');")
+conn.execute("insert into category(category) values ('burocracia');")
+conn.execute("insert into category(category) values ('compras');")
 
 # Commiting
 conn.commit()
 
 # creating subcategory table:
-tblscategory = "CREATE TABLE IF NOT EXISTS subcategory (id INTEGER PRIMARY KEY, subcategory text);"
+tblscategory = "CREATE TABLE IF NOT EXISTS subcategory (id INTEGER PRIMARY KEY, catid integer, subcategory text, category text);"
 conn.execute(tblscategory)
-conn.execute("insert into subcategory(subcategory) values ('restaurante');")
-conn.execute("insert into subcategory(subcategory) values ('supermercado');")
-conn.execute("insert into subcategory(subcategory) values ('internet');")
-conn.execute("insert into subcategory(subcategory) values ('luz');")
-conn.execute("insert into subcategory(subcategory) values ('condominio');")
-conn.execute("insert into subcategory(subcategory) values ('manutencao');")
-conn.execute("insert into subcategory(subcategory) values ('onibus');")
-conn.execute("insert into subcategory(subcategory) values ('gasolina');")
-conn.execute("insert into subcategory(subcategory) values ('outros');")
-conn.execute("insert into subcategory(subcategory) values ('gym');")
-conn.execute("insert into subcategory(subcategory) values ('exames');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (1, 'restaurante', 'alimentacao');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (1, 'supermercado', 'alimentacao');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'internet', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'luz', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'condominio', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'telefone', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'aluguel', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (2, 'manutencao', 'casa');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (3, 'onibus', 'transporte');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (3, 'gasolina', 'transporte');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (3, 'taxi', 'transporte');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (4, 'gym', 'esporte');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (5, 'exames', 'saude');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (5, 'farmacia', 'saude');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (6, 'monotributo', 'burocracia');")
+conn.execute("insert into subcategory(catid, subcategory, category) values (0, 'outros', '');")
 
 # Commiting
 conn.commit()

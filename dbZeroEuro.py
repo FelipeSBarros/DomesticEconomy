@@ -34,9 +34,14 @@ class DBHelper:
         stmt = "SELECT distinct(category) FROM category"
         return [x[0] for x in self.conn.execute(stmt)]
     
-    def get_subcategory(self):
-        stmt = "SELECT distinct(subcategory) FROM subcategory"
-        return [x[0] for x in self.conn.execute(stmt)]
+    def get_subcategory(self, cat = None):
+        if cat:
+            stmt = "SELECT distinct(subcategory) FROM subcategory WHERE category = (?) OR category = (?);"
+            args = (cat, '')
+            return [x[0] for x in self.conn.execute(stmt, args)]
+        else:
+            stmt = "SELECT distinct(subcategory) FROM subcategory"
+            return [x[0] for x in self.conn.execute(stmt)]
     
     def insertExpenses(self, owner, category, subcategory, value, date):
         stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ('gasto', (?), (?), (?), (?), (?));"
@@ -44,8 +49,8 @@ class DBHelper:
         self.conn.execute(stmt, args)
         self.conn.commit()
     
-    def insertIncome(self, owner, value, cat):
-        stmt = "INSERT INTO general(action, user, category, value, desconto, data) VALUES ('receita', (?), (?), (?), 0, '31/12/2018');"
-        args = (owner, value)
+    def insertIncome(self, owner, value, date):
+        stmt = "INSERT INTO general(action, user, value, date) VALUES ('receita', (?), (?), (?));"
+        args = (owner, value, date)
         self.conn.execute(stmt, args)
         self.conn.commit()

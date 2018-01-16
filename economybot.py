@@ -79,26 +79,35 @@ def handle_updates(updates):
                 users = db.get_users()
                 if user not in users:
                     db.insertuser(user, chat)
-                send_message("Before we can start, a few tips ans tricks: \n *Use:* \n `/insert [value] [category] [subcategory]` \n to insert a expenses, WHERE *value* is a number; \n *Exemple:* \n `/insert Casa Comida 100`", chat)
+                send_message("Before we can start, a few tips ans tricks: \n *Use:* \n `/insert [value] [category] [subcategory]` \n to insert a expenses, WHERE *value* is a number; \n *Exemple:* \n `/insert 100 alimentacao restaurante`", chat)
                 send_action(chat)
-                send_message("To know the *categorys* you cna use, just type `/category` and I send you the options you have. \n The same for *subcategory* (just write `/subcategory`)", chat)
+                send_message("To know the *category* you can use, just type `/category` and I send you the options you have. \n The same for *subcategory* (just write `/subcategory`)", chat)
                 
-            elif text[0:7] == "/insert":
+            if text.startswith("/expenses"):
                 action, value, category, subcategory = text.split(" ")
-                send_message("Organizing the data {}".format(text), chat)
-                #send_message("Date: {}".format(date.date(date)), chat)
+                send_message("Organizing the data!", chat)
                 db.insertExpenses(user, category, subcategory, int(value), date.date.today())
-                send_message("select Well done! {} inserted as expenses".format(value), chat)
+                send_message("select Well done!\n {} inserted as expenses".format(value), chat)
 
+            if text.startswith("/income"):
+                action, value = text.split(" ")
+                send_message("Saving income!!", chat)
+                db.insertIncome(user, int(value), date.date.today())
+                send_message("select Well done!\n {} inserted as income!".format(value), chat)
+                
             if text == "/category":
                 cats = db.get_category()
                 #cats = [[cats] for category in cats]
                 send_message("Your options for **category** are:\n\n{}".format('\n'.join(cats)), chat)
             
-            if text == "/subcategory":
-                subcats = db.get_subcategory()
-                #cats = [[cats] for category in cats]
-                send_message("Your options for **category** are:\n\n{}".format('\n'.join(subcats)), chat)    
+            if text.startswith("/subcategory"):
+                if len(text.split(" "))==1:
+                    subcats = db.get_subcategory()
+                    send_message("*Subcategory* options:\n\n{}".format('\n'.join(subcats)), chat)    
+                if len(text.split(" "))==2:
+                    command, cat = text.split(" ")
+                    subcats = db.get_subcategory(cat)
+                    send_message("*Subcategory* options for the category *{}*, are:\n\n{}".format(cat, '\n'.join(subcats)), chat)
 
         except KeyError:
             pass
