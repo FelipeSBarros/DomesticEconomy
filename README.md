@@ -20,6 +20,11 @@ pip install requests
 `/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
 ![start](img/start.png)  
 `/category` will show all categories already registered in the category table;  
-`/subcategory` will do the same for subcategory table;  
-
+![getting category](img/getcategory.png)  
+`/subcategory [category]` will show the subcategories related to a especific `category`;  
+![getting sub category](img/getsubcat.png)  
+`/income [value]` will save the value assed as a income in the database
+![saving income](img/income.png)  
+`/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;
+![expenses](img/expenses.png)  
 **NOTE:** The database is note relational yet. I need to work on that too. All data are saved on general table
