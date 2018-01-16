@@ -106,7 +106,16 @@ def handle_updates(updates):
                     command, cat = text.split(" ")
                     subcats = db.get_subcategory(cat)
                     send_message("*Subcategory* options for the category *{}*, are:\n\n{}".format(cat, '\n'.join(subcats)), chat)
-
+            
+            if text.startswith("/summary"):
+                if len(text.split(" "))==2:
+                    param = text.split(" ")[1]
+                    summary = db.get_summary(param)
+                    send_message("*Summary*:\n\n{}".format(summary), chat)    
+                if len(text.split(" "))==3:
+                    param, paramII = text.split(" ")[1:3]
+                    summary = db.get_summary(param, paramII)
+                    send_message("*Summary*:\n\n{}".format(summary), chat)
         except KeyError:
             pass
             

@@ -54,3 +54,11 @@ class DBHelper:
         args = (owner, value, date)
         self.conn.execute(stmt, args)
         self.conn.commit()
+        
+    def get_summary(self, param = None, paramII = None):
+        if param and paramII:
+            stmt = "SELECT category, subcategory, sum(value) FROM general WHERE action = 'gasto' GROUP BY category, subcategory"
+            return [x for x in self.conn.execute(stmt)]
+        else:
+            stmt = "SELECT {}, sum(value) FROM general WHERE action = 'gasto' GROUP BY {}".format(param, param)
+            return [x for x in self.conn.execute(stmt)]
