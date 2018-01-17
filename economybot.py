@@ -111,11 +111,17 @@ def handle_updates(updates):
                 if len(text.split(" "))==2:
                     param = text.split(" ")[1]
                     summary = db.get_summary(param)
-                    send_message("*Summary*:\n\n{}".format(summary), chat)    
+                    send_message("*Summary by {}*:".format(param), chat)    
+                    for a in summary:
+                        send_message("{}".format(a), chat)    
+                    #send_message("*Summary*:\n\n{}".format(summary), chat)    
                 if len(text.split(" "))==3:
                     param, paramII = text.split(" ")[1:3]
                     summary = db.get_summary(param, paramII)
-                    send_message("*Summary*:\n\n{}".format(summary), chat)
+                    send_message("*Summary by {} and {}*:".format(param, paramII), chat)    
+                    for a in summary:
+                        send_message("{}".format(a), chat)    
+                    #send_message("*Summary*:\n\n{}".format(summary), chat)
         except KeyError:
             pass
             

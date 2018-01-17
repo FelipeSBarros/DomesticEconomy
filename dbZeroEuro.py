@@ -5,7 +5,9 @@ Created on Fri Jan 12 13:14:01 2018
 @author: felipe
 """
 import sqlite3
-
+import shutil
+import time
+import os
 
 class DBHelper:
     def __init__(self, dbname="gastos.sqlite"):
@@ -62,3 +64,38 @@ class DBHelper:
         else:
             stmt = "SELECT {}, sum(value) FROM general WHERE action = 'gasto' GROUP BY {}".format(param, param)
             return [x for x in self.conn.execute(stmt)]
+            
+    # Database Backup function
+    def sqlite3_backup(dbfile = 'gastos.sqlite', backupdir = './backup'):
+        """Create timestamped database copy"""
+    
+        if not os.path.isdir(backupdir):
+            raise Exception("Backup directory does not exist: {}".format(backupdir))
+    
+        backup_file = os.path.join(backupdir, os.path.basename(dbfile) +
+                                   time.strftime("-%Y%m%d-%H%M%S"))
+    
+        connection = sqlite3.connect(dbfile)
+        cursor = connection.cursor()
+    
+        # Lock database before making a backup
+        cursor.execute('begin immediate')
+        # Make new backup file
+        shutil.copyfile(dbfile, backup_file)
+        print ("\nCreating {}...".format(backup_file))
+        # Unlock database
+        connection.rollback()
+    
+    # Clean old backup function
+    def clean_data(backup_dir = './backup', NO_OF_DAYS = 7):
+        """Delete files older than NO_OF_DAYS days"""
+    
+        print ("\n------------------------------")
+        print ("Cleaning up old backups")
+    
+        for filename in os.listdir(backup_dir):
+            backup_file = os.path.join(backup_dir, filename)
+            if os.path.isfile(backup_file):
+                if os.stat(backup_file).st_ctime < (time.time() - NO_OF_DAYS * 86400):
+                    os.remove(backup_file)
+                    print ("Deleting {}...".format(backup_file))
