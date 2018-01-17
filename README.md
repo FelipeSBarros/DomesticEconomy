@@ -27,4 +27,9 @@ pip install requests
 ![saving income](img/income.png)  
 `/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;
 ![expenses](img/expenses.png)  
+`/summary [param] [paramII]` will return the summary of data saved on database groupping by `param`. If a second param is passed (`paramII`) the summary will be for `category` and `subcategory`;
+![expenses](img/summaryparamuser.png)  
+![expenses](img/summarycategory.png)  
+![expenses](img/summaryparamII.png)  
+
 **NOTE:** The database is note relational yet. I need to work on that too. All data are saved on general table
