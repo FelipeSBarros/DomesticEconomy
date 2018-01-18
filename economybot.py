@@ -122,6 +122,16 @@ def handle_updates(updates):
                     for a in summary:
                         send_message("{}".format(a), chat)    
                     #send_message("*Summary*:\n\n{}".format(summary), chat)
+                        
+            if text.startswith("/backup"):
+                send_message("Building databse backup", chat)    
+                db.sqlite3_backup()
+                if len(text.split(" "))==2:
+                    NO_OF_DAYS = int(text.split(" ")[1])
+                    send_message("Removing backups with {} days or more".format(NO_OF_DAYS), chat)    
+                    db.clean_data(backup_dir = './backup', NO_OF_DAYS = NO_OF_DAYS)
+                    
+                send_message("All done!", chat)    
         except KeyError:
             pass
             

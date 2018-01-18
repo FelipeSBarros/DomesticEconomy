@@ -66,14 +66,13 @@ class DBHelper:
             return [x for x in self.conn.execute(stmt)]
             
     # Database Backup function
-    def sqlite3_backup(dbfile = 'gastos.sqlite', backupdir = './backup'):
+    def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup'):
         """Create timestamped database copy"""
     
         if not os.path.isdir(backupdir):
             raise Exception("Backup directory does not exist: {}".format(backupdir))
     
-        backup_file = os.path.join(backupdir, os.path.basename(dbfile) +
-                                   time.strftime("-%Y%m%d-%H%M%S"))
+        backup_file = os.path.join(backupdir, os.path.basename(dbfile) + time.strftime("-%Y%m%d-%H%M%S"))
     
         connection = sqlite3.connect(dbfile)
         cursor = connection.cursor()
@@ -87,7 +86,7 @@ class DBHelper:
         connection.rollback()
     
     # Clean old backup function
-    def clean_data(backup_dir = './backup', NO_OF_DAYS = 7):
+    def clean_data(slef, backup_dir = './backup', NO_OF_DAYS = 7):
         """Delete files older than NO_OF_DAYS days"""
     
         print ("\n------------------------------")
