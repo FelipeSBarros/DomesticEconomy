@@ -78,12 +78,12 @@ class DBHelper:
         cursor = connection.cursor()
     
         # Lock database before making a backup
-        cursor.execute('begin immediate')
+        #cursor.execute('begin immediate')
         # Make new backup file
         shutil.copyfile(dbfile, backup_file)
         print ("\nCreating {}...".format(backup_file))
         # Unlock database
-        connection.rollback()
+        #connection.rollback()
     
     # Clean old backup function
     def clean_data(slef, backup_dir = './backup', NO_OF_DAYS = 7):

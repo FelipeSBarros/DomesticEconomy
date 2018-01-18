@@ -85,7 +85,7 @@ def handle_updates(updates):
                 
             if text.startswith("/expenses"):
                 action, value, category, subcategory = text.split(" ")
-                db.insertExpenses(user, category, subcategory, int(value), date.date.today())
+                db.insertExpenses(user, category, subcategory, float(value), date.date.today())
                 send_message("Ok, I'm done!\n {} inserted as expenses".format(value), chat)
 
             if text.startswith("/income"):

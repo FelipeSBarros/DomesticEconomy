@@ -11,7 +11,7 @@ dbname="gastos.sqlite"
 conn = sqlite3.connect(dbname)
 
 # creating general table:
-tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY, action text, user text, category text, subcategory text, value integer, date text);"
+tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY, action text, user text, category text, subcategory text, value REAL, date text);"
 conn.execute(tblgeneral)
 
 # Commiting
