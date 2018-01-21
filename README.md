@@ -32,4 +32,4 @@ pip install requests
 ![expenses](img/summarycategory.png)  
 ![expenses](img/summaryparamII.png)  
 
-**NOTE:** The database is note relational yet. I need to work on that too. All data are saved on general table
+:warning: I'm working to make use of SQLite3 relactional tables intead of heaving everything on general table. Althought there are a lot of work to be done, you can check it [here](https://github.com/FelipeSBarros/DomesticEconomy/tree/RelationalDB)
