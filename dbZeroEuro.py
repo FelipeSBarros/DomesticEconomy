@@ -15,7 +15,7 @@ class DBHelper:
         self.conn = sqlite3.connect(dbname)
 
     def insertuser(self, user, chat):
-        tblstmt = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, user text, chat integer)"
+        tblstmt = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, user text, chat integer)"
         #itemidx = "CREATE INDEX IF NOT EXISTS itemIndex ON items (description ASC)" 
         #ownidx = "CREATE INDEX IF NOT EXISTS ownIndex ON items (owner ASC)"
         self.conn.execute(tblstmt)
@@ -25,7 +25,7 @@ class DBHelper:
         self.conn.commit()
     
     def get_action(self):
-        stmt = "SELECT distinct(action) FROM general"
+        stmt = "SELECT distinct(action) FROM action"
         return [x[0] for x in self.conn.execute(stmt)]
     
     def get_users(self):
@@ -38,7 +38,7 @@ class DBHelper:
     
     def get_subcategory(self, cat = None):
         if cat:
-            stmt = "SELECT distinct(subcategory) FROM subcategory WHERE category = (?) OR category = (?);"
+            stmt = "SELECT distinct(subcategory) FROM subcategory WHERE catid = (SELECT id from category where category = (?)) OR category = (?);"
             args = (cat, '')
             return [x[0] for x in self.conn.execute(stmt, args)]
         else:
@@ -46,23 +46,23 @@ class DBHelper:
             return [x[0] for x in self.conn.execute(stmt)]
     
     def insertExpenses(self, owner, category, subcategory, value, date):
-        stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ('gasto', (?), (?), (?), (?), (?));"
+        stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ((SELECT id from action where action = 'gastos'), (select id from users where user = (?)), (select id from category where category = (?)), (select id from subcategory where subcategory = (?)), (?), (?));"
         args = (owner, category, subcategory, value, date)
         self.conn.execute(stmt, args)
         self.conn.commit()
     
     def insertIncome(self, owner, value, date):
-        stmt = "INSERT INTO general(action, user, value, date) VALUES ('receita', (?), (?), (?));"
+        stmt = "INSERT INTO general(action, user, value, date) VALUES ((SELECT id from action where action = 'receita'), (select id from users where user = (?)), (?), (?));"
         args = (owner, value, date)
         self.conn.execute(stmt, args)
         self.conn.commit()
         
     def get_summary(self, param = None, paramII = None):
         if param and paramII:
-            stmt = "SELECT category, subcategory, sum(value) FROM general WHERE action = 'gasto' GROUP BY category, subcategory"
+            stmt = "SELECT category.category, subcategory.subcategory, sum(general.value) FROM general INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory WHERE general.action = (select id from action where action = 'gastos') GROUP BY general.category, general.subcategory"
             return [x for x in self.conn.execute(stmt)]
         else:
-            stmt = "SELECT {}, sum(value) FROM general WHERE action = 'gasto' GROUP BY {}".format(param, param)
+            stmt = "SELECT users.{}, sum(general.value) FROM general INNER JOIN users ON users.id = general.user WHERE action = (select id from action where action = 'gastos')  GROUP BY general.{}".format(param, param)
             return [x for x in self.conn.execute(stmt)]
             
     # Database Backup function

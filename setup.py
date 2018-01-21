@@ -11,23 +11,24 @@ dbname="gastos.sqlite"
 conn = sqlite3.connect(dbname)
 
 # creating general table:
-tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY, action text, user text, category text, subcategory text, value REAL, date text);"
+tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY AUTOINCREMENT, action integer, user integer, category integer, subcategory integer, value REAL, date text, FOREIGN KEY (action) REFERENCES action(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (subcategory) REFERENCES subcategory(id) ON DELETE CASCADE ON UPDATE CASCADE);"
 conn.execute(tblgeneral)
-
+Indxgeneral = "CREATE INDEX indiceForeignKeys ON general (action, user, category, subcategory);"
+conn.execute(Indxgeneral)
 # Commiting
 conn.commit()
 
-# creating action table:
-tblurs = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, user text, chat text);"
+# creating users table:
+tblurs = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, user text, chat text);"
 conn.execute(tblurs)
-#conn.execute("insert into action(user) values ('gastos');")
-#conn.execute("insert into action(user) values ('receita');")
+conn.execute("insert into users(user) values ('gastos');")
+conn.execute("insert into users(user) values ('receita');")
 
 # Commiting
 conn.commit()
 
 # creating action table:
-tblaction = "CREATE TABLE IF NOT EXISTS action (id INTEGER PRIMARY KEY, action text);"
+tblaction = "CREATE TABLE IF NOT EXISTS action (id INTEGER PRIMARY KEY AUTOINCREMENT, action text);"
 conn.execute(tblaction)
 conn.execute("insert into action(action) values ('gastos');")
 conn.execute("insert into action(action) values ('receita');")
@@ -36,9 +37,9 @@ conn.execute("insert into action(action) values ('receita');")
 conn.commit()
 
 # creating category table:
-tblcategory = "CREATE TABLE IF NOT EXISTS category (id INTEGER PRIMARY KEY, category text);"
+tblcategory = "CREATE TABLE IF NOT EXISTS category (id INTEGER PRIMARY KEY AUTOINCREMENT, category text);"
 conn.execute(tblcategory)
-conn.execute("insert into category(category) values ('alimentação');")
+conn.execute("insert into category(category) values ('alimentacao');")
 conn.execute("insert into category(category) values ('casa');")
 conn.execute("insert into category(category) values ('transporte');")
 conn.execute("insert into category(category) values ('esporte');")
@@ -50,7 +51,7 @@ conn.execute("insert into category(category) values ('compras');")
 conn.commit()
 
 # creating subcategory table:
-tblscategory = "CREATE TABLE IF NOT EXISTS subcategory (id INTEGER PRIMARY KEY, catid integer, subcategory text, category text);"
+tblscategory = "CREATE TABLE IF NOT EXISTS subcategory (id INTEGER PRIMARY KEY AUTOINCREMENT, catid integer, subcategory text, category text, FOREIGN KEY (catid) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE);"
 conn.execute(tblscategory)
 conn.execute("insert into subcategory(catid, subcategory, category) values (1, 'restaurante', 'alimentacao');")
 conn.execute("insert into subcategory(catid, subcategory, category) values (1, 'supermercado', 'alimentacao');")
