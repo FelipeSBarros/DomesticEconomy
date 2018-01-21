@@ -33,3 +33,11 @@ pip install requests
 ![expenses](img/summaryparamII.png)  
 
 :warning: I'm working to make use of SQLite3 relactional tables intead of heaving everything on general table. Althought there are a lot of work to be done, you can check it [here](https://github.com/FelipeSBarros/DomesticEconomy/tree/RelationalDB)
+
+#### Useful Links  
+Some links that was useful to develop this project and study python:
+* [Python para impacientes](http://python-para-impacientes.blogspot.com.ar)
+* [Python Anywhere](https://www.pythonanywhere.com)
+* [SQLite3 Documentation](https://sqlite.org/docs.html)
+* [SQLite3 Tutorials](http://www.sqlitetutorial.net/)
+* [Building a telegram bot](https://www.codementor.io/garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay)
