@@ -115,14 +115,9 @@ def handle_updates(updates):
                     for a in summary:
                         send_message("{}".format(a), chat)    
                     #send_message("*Summary*:\n\n{}".format(summary), chat)    
-                if len(text.split(" "))==3:
-                    param, paramII = text.split(" ")[1:3]
-                    summary = db.get_summary(param, paramII)
-                    send_message("*Summary by {} and {}*:".format(param, paramII), chat)    
-                    for a in summary:
-                        send_message("{}".format(a), chat)    
-                    #send_message("*Summary*:\n\n{}".format(summary), chat)
-                        
+                else:
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param]", chat)    
+            
             if text.startswith("/backup"):
                 send_message("Building databse backup", chat)    
                 db.sqlite3_backup()
