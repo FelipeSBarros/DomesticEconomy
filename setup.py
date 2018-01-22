@@ -74,9 +74,9 @@ conn.execute("insert into subcategory(catid, subcategory, category) values (0, '
 conn.commit()
 
 # Creating views with complete tables:
-conn.execute("CREATE VIEW IF NOT EXISTS view_general(action, user, category, subcategory, value, date) AS SELECT action.action, users.user, category.category, subcategory.subcategory, general.value , general.date FROM general INNER JOIN action on action.id = general.action INNER JOIN users on users.id = general.user INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory;")
-conn.execute("CREATE VIEW IF NOT EXISTS view_catsummary(category, value) AS SELECT category.category, sum(general.value) FROM general INNER JOIN category on category.id = general.category WHERE general.action = (SELECT id from action where action = 'gastos');")
-conn.execute("CREATE VIEW IF NOT EXISTS view_scatsummary(category, subcategory, value) AS SELECT category.category, subcategory.subcategory, sum(general.value) FROM general INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory WHERE general.action = (SELECT id from action where action = 'gastos');")
-conn.execute("CREATE VIEW IF NOT EXISTS view_usersummary(user, value) AS SELECT users.user, sum(general.value) FROM general INNER JOIN users on users.id = general.user WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.execute("CREATE VIEW IF NOT EXISTS view_general AS SELECT action.action, users.user, category.category, subcategory.subcategory, general.value , general.date FROM general INNER JOIN action on action.id = general.action INNER JOIN users on users.id = general.user INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory;")
+conn.execute("CREATE VIEW IF NOT EXISTS view_catsummary AS SELECT category.category, sum(general.value) FROM general INNER JOIN category on category.id = general.category WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.execute("CREATE VIEW IF NOT EXISTS view_scatsummary AS SELECT category.category, subcategory.subcategory, sum(general.value) FROM general INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.execute("CREATE VIEW IF NOT EXISTS view_usersummary AS SELECT users.user, sum(general.value) FROM general INNER JOIN users on users.id = general.user WHERE general.action = (SELECT id from action where action = 'gastos');")
 conn.commit()
 print("All Done!")
