@@ -57,13 +57,19 @@ class DBHelper:
         self.conn.execute(stmt, args)
         self.conn.commit()
         
-    def get_summary(self, param = None, paramII = None):
-        if param and paramII:
-            stmt = "SELECT category.category, subcategory.subcategory, sum(general.value) FROM general INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory WHERE general.action = (select id from action where action = 'gastos') GROUP BY general.category, general.subcategory"
+    def get_summary(self, param = None):
+        if param == 'category':
+            stmt = "SELECT * from view_catsummary"
+            return [x for x in self.conn.execute(stmt)]
+        elif param == 'subcategory':
+            stmt = "SELECT * from view_scatsummary"
+            return [x for x in self.conn.execute(stmt)]
+        elif param == 'user':
+            stmt = "SELECT * from view_usersummary"
             return [x for x in self.conn.execute(stmt)]
         else:
-            stmt = "SELECT users.{}, sum(general.value) FROM general INNER JOIN users ON users.id = general.user WHERE action = (select id from action where action = 'gastos')  GROUP BY general.{}".format(param, param)
-            return [x for x in self.conn.execute(stmt)]
+            msg = ["Not found: {}".format(param)]
+            return msg
             
     # Database Backup function
     def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup'):

@@ -11,7 +11,7 @@ dbname="gastos.sqlite"
 conn = sqlite3.connect(dbname)
 
 # creating general table:
-tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY AUTOINCREMENT, action integer, user integer, category integer, subcategory integer, value REAL, date text, FOREIGN KEY (action) REFERENCES action(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (subcategory) REFERENCES subcategory(id) ON DELETE CASCADE ON UPDATE CASCADE);"
+tblgeneral = "CREATE TABLE IF NOT EXISTS general (id INTEGER PRIMARY KEY AUTOINCREMENT, action integer, user integer, category integer, subcategory integer, value REAL, date text, FOREIGN KEY (action) REFERENCES action(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (user) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE, FOREIGN KEY (subcategory) REFERENCES subcategory(id) ON DELETE CASCADE ON UPDATE CASCADE);"
 conn.execute(tblgeneral)
 Indxgeneral = "CREATE INDEX indiceForeignKeys ON general (action, user, category, subcategory);"
 conn.execute(Indxgeneral)
@@ -21,8 +21,8 @@ conn.commit()
 # creating users table:
 tblurs = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, user text, chat text);"
 conn.execute(tblurs)
-conn.execute("insert into users(user) values ('gastos');")
-conn.execute("insert into users(user) values ('receita');")
+#conn.execute("insert into users(user) values ('Felipe');")
+#conn.execute("insert into users(user) values ('Natalia');")
 
 # Commiting
 conn.commit()
@@ -73,4 +73,10 @@ conn.execute("insert into subcategory(catid, subcategory, category) values (0, '
 # Commiting
 conn.commit()
 
+# Creating views with complete tables:
+conn.execute("CREATE VIEW IF NOT EXISTS view_general(action, user, category, subcategory, value, date) AS SELECT action.action, users.user, category.category, subcategory.subcategory, general.value , general.date FROM general INNER JOIN action on action.id = general.action INNER JOIN users on users.id = general.user INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory;")
+conn.execute("CREATE VIEW IF NOT EXISTS view_catsummary(category, value) AS SELECT category.category, sum(general.value) FROM general INNER JOIN category on category.id = general.category WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.execute("CREATE VIEW IF NOT EXISTS view_scatsummary(category, subcategory, value) AS SELECT category.category, subcategory.subcategory, sum(general.value) FROM general INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.execute("CREATE VIEW IF NOT EXISTS view_usersummary(user, value) AS SELECT users.user, sum(general.value) FROM general INNER JOIN users on users.id = general.user WHERE general.action = (SELECT id from action where action = 'gastos');")
+conn.commit()
 print("All Done!")
