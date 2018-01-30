@@ -8,6 +8,9 @@ import sqlite3
 import shutil
 import time
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import datetime
 
 class DBHelper:
     def __init__(self, dbname="gastos.sqlite"):
@@ -71,6 +74,47 @@ class DBHelper:
             msg = ["Not found: {}".format(param)]
             return msg
             
+    def get_plots(self, param = None):
+        plt.style.use('ggplot')
+
+        if param == 'category':
+            stmt = "SELECT * from view_catsummary"
+            res = self.conn.execute(stmt)
+            res = res.fetchall()
+            colnames = ("Cat", "Value")
+            res = pd.DataFrame(res, columns=colnames)
+            res.plot.bar(x="Cat", y="Value")
+            path = '/home/felipe/Repos/ZeroEuroBot/Category_{}.png'.format(str(datetime.date.today()))
+            plt.savefig(path)  # save the figure to file
+            plt.close()
+            return path
+        elif param == 'subcategory':
+            stmt = "SELECT * from view_scatsummary"
+            res = self.conn.execute(stmt)
+            res = res.fetchall()
+            colnames = ("Cat", "SubCat", "Value")
+            res = pd.DataFrame(res, columns=colnames)
+            res["Categorias"] = res.Cat + " " + res.SubCat
+            res.plot.bar(x = "Categorias", y = "Value")
+            path = '/home/felipe/Repos/ZeroEuroBot/SubCategory_{}.png'.format(str(datetime.date.today()))
+            plt.savefig(path)  # save the figure to file
+            plt.close()
+            return path
+        elif param == 'user':
+            stmt = "SELECT * from view_usersummary"
+            res = self.conn.execute(stmt)
+            res = res.fetchall()
+            colnames = ("User", "Value")
+            res = pd.DataFrame(res, columns=colnames)
+            res.plot.bar(x="User", y="Value")
+            path = '/home/felipe/Repos/ZeroEuroBot/User_{}.png'.format(str(datetime.date.today()))
+            plt.savefig(path)  # save the figure to file
+            plt.close()
+            return path
+        else:
+            msg = ["Not found: {}".format(param)]
+            return msg
+
     # Database Backup function
     def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup'):
         """Create timestamped database copy"""

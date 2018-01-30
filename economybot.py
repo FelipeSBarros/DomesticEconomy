@@ -14,6 +14,7 @@ import urllib # to handle with pecial characters
 import datetime as date # to manage date and time
 from dbZeroEuro import DBHelper # import class and method created to work with sqlite3
 
+
 TOKEN = API
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
 db = DBHelper()
@@ -53,6 +54,11 @@ def send_message(text, chat_id, parse_mode = 'markdown', reply_markup = None):
     url = URL + "sendMessage?text={}&chat_id={}&parse_mode={}".format(text, chat_id, parse_mode)
     if reply_markup:
         url += "reply_markup={}".format(reply_markup)
+    get_url(url)
+
+def send_photo(chat_id, photo):
+    photo = urllib.parse.quote_plus(photo)
+    url = URL + "sendPhoto?chat_id={}&photo=attach://{}".format(chat_id, photo)
     get_url(url)
     
 def send_action(chat_id, action = 'typing'):
@@ -116,8 +122,16 @@ def handle_updates(updates):
                         send_message("{}".format(a), chat)    
                     #send_message("*Summary*:\n\n{}".format(summary), chat)    
                 else:
-                    send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param]", chat)    
-            
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param]", chat)
+
+            if text.startswith("/plotsummary"):
+                if len(text.split(" "))==2:
+                    param = text.split(" ")[1]
+                    path = db.get_plots(param)
+                    send_photo(chat_id = chat, photo = path)
+                else:
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /plotsummary [param]", chat)
+
             if text.startswith("/backup"):
                 send_message("Building databse backup", chat)    
                 db.sqlite3_backup()
