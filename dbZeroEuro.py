@@ -76,6 +76,9 @@ class DBHelper:
             
     def get_plots(self, param = None):
         plt.style.use('ggplot')
+        plotwd = "plots"
+        if not os.path.exists(plotwd):
+            os.makedirs(plotwd)
         if param == 'category':
             stmt = "SELECT * from view_catsummary"
             res = self.conn.execute(stmt)
@@ -83,7 +86,7 @@ class DBHelper:
             colnames = ("Cat", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res.plot.bar(x="Cat", y="Value", legend = False, rot=7)
-            path = os.getcwd() + '/Category_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/Category_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
@@ -95,7 +98,7 @@ class DBHelper:
             res = pd.DataFrame(res, columns=colnames)
             res["Categorias"] = res.Cat + " " + res.SubCat
             res.plot.bar(x = "Categorias", y = "Value", legend = False, rot=7)
-            path = os.getcwd() + '/SubCategory_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
@@ -106,7 +109,7 @@ class DBHelper:
             colnames = ("User", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res.plot.bar(x="User", y="Value", legend = False, rot=0)
-            path = os.getcwd() + '/User_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/User_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
