@@ -41,4 +41,6 @@ Some links that was useful to develop this project and study python:
 * [SQLite3 Documentation](https://sqlite.org/docs.html)
 * [SQLite3 Tutorials](http://www.sqlitetutorial.net/)
 * [Building a telegram bot](https://www.codementor.io/garethdwyer/building-a-telegram-bot-using-python-part-1-goi5fncay)
-
+* [Matplotlib](https://stackoverflow.com/questions/32244019/how-to-rotate-x-axis-tick-labels-in-pandas-barplot)
+* [cookbook-plotting](https://pandas.pydata.org/pandas-docs/stable/cookbook.html#cookbook-plotting)
+* [Pandas visualization](https://pandas.pydata.org/pandas-docs/stable/visualization.html#visualization-barplot)
