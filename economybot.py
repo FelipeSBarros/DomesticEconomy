@@ -13,7 +13,7 @@ import time
 import urllib # to handle with pecial characters
 import datetime as date # to manage date and time
 from dbZeroEuro import DBHelper # import class and method created to work with sqlite3
-
+from os.path import basename, dirname
 
 TOKEN = API
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -57,9 +57,10 @@ def send_message(text, chat_id, parse_mode = 'markdown', reply_markup = None):
     get_url(url)
 
 def send_photo(chat_id, photo):
-    photo = urllib.parse.quote_plus(photo)
-    url = URL + "sendPhoto?chat_id={}&photo=attach://{}".format(chat_id, photo)
-    get_url(url)
+    data = {'chat_id': chat_id}
+    url = URL + 'sendPhoto'
+    files = {'photo': (dirname(photo), open(basename(photo), "rb"))}
+    r = requests.get(url, data=data, files=files)
     
 def send_action(chat_id, action = 'typing'):
     url = URL + "sendChatAction?chat_id={}&action={}".format(chat_id, action)
@@ -124,11 +125,15 @@ def handle_updates(updates):
                 else:
                     send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param]", chat)
 
-            if text.startswith("/plotsummary"):
+            if text.startswith("/plot"):
                 if len(text.split(" "))==2:
                     param = text.split(" ")[1]
                     path = db.get_plots(param)
-                    send_photo(chat_id = chat, photo = path)
+                    if path.startswith('Not'):
+                        send_message(path, chat)
+                    else:
+                        print(path)
+                        send_photo(chat_id = chat, photo = path)
                 else:
                     send_message("*Wrong parameter sent!*\n you ust send:\n /plotsummary [param]", chat)
 

@@ -76,18 +76,17 @@ class DBHelper:
             
     def get_plots(self, param = None):
         plt.style.use('ggplot')
-
         if param == 'category':
             stmt = "SELECT * from view_catsummary"
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("Cat", "Value")
             res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="Cat", y="Value")
-            path = '/home/felipe/Repos/ZeroEuroBot/Category_{}.png'.format(str(datetime.date.today()))
+            res.plot.bar(x="Cat", y="Value", legend = False, rot=7)
+            path = os.getcwd() + '/Category_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
-            return path
+            return str(path)
         elif param == 'subcategory':
             stmt = "SELECT * from view_scatsummary"
             res = self.conn.execute(stmt)
@@ -95,25 +94,25 @@ class DBHelper:
             colnames = ("Cat", "SubCat", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res["Categorias"] = res.Cat + " " + res.SubCat
-            res.plot.bar(x = "Categorias", y = "Value")
-            path = '/home/felipe/Repos/ZeroEuroBot/SubCategory_{}.png'.format(str(datetime.date.today()))
+            res.plot.bar(x = "Categorias", y = "Value", legend = False, rot=7)
+            path = os.getcwd() + '/SubCategory_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
-            return path
+            return str(path)
         elif param == 'user':
             stmt = "SELECT * from view_usersummary"
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("User", "Value")
             res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="User", y="Value")
-            path = '/home/felipe/Repos/ZeroEuroBot/User_{}.png'.format(str(datetime.date.today()))
+            res.plot.bar(x="User", y="Value", legend = False, rot=0)
+            path = os.getcwd() + '/User_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
-            return path
+            return str(path)
         else:
-            msg = ["Not found: {}".format(param)]
-            return msg
+            path = "Not found: {}".format(param)
+            return str(path)
 
     # Database Backup function
     def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup'):
@@ -134,8 +133,9 @@ class DBHelper:
         print ("\nCreating {}...".format(backup_file))
         # Unlock database
         #connection.rollback()
-    
-    # Clean old backup function
+        #backupMail.send_mail(send_from = yauser, send_to = dba, text = backup_file, files = backup_file)
+        #import backupMail  # function to send backup by email
+        # Clean old backup function
     def clean_data(slef, backup_dir = './backup', NO_OF_DAYS = 7):
         """Delete files older than NO_OF_DAYS days"""
     
