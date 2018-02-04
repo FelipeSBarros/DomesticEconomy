@@ -77,33 +77,34 @@ class DBHelper:
     def get_plots(self, param = None):
         plt.style.use('ggplot')
         plotwd = "plots"
+        plt.rcParams.update({'figure.autolayout': True})
         if not os.path.exists(plotwd):
             os.makedirs(plotwd)
         if param == 'category':
-            stmt = "SELECT * from view_catsummary"
+            stmt = "SELECT * from view_catsummary ORDER BY 2 DESC"
             res = self.conn.execute(stmt)
             res = res.fetchall()
-            colnames = ("Cat", "Value")
+            colnames = ("Categorias", "Value")
             res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="Cat", y="Value", legend = False, rot=7)
+            res.plot.bar(x="Categorias", y="Value", legend = False, rot=7)
             path = os.path.join(os.getcwd(), plotwd) + '/Category_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'subcategory':
-            stmt = "SELECT * from view_scatsummary"
+            stmt = "SELECT * from view_scatsummary ORDER BY 3 DESC"
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("Cat", "SubCat", "Value")
             res = pd.DataFrame(res, columns=colnames)
-            res["Categorias"] = res.Cat + " " + res.SubCat
-            res.plot.bar(x = "Categorias", y = "Value", legend = False, rot=7)
+            res["SubCategorias"] = res.Cat + " " + res.SubCat
+            res.plot.bar(x = "SubCategorias", y = "Value", legend = False, rot=90)
             path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_{}.png'.format(str(datetime.date.today()))
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'user':
-            stmt = "SELECT * from view_usersummary"
+            stmt = "SELECT * from view_usersummary ORDER BY 2 DESC"
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("User", "Value")
