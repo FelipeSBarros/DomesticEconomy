@@ -8,6 +8,8 @@ virtualenv ZeroEuroBot -p python3
 source ZeroEuroBot/bin/activate
 easy_install -U pip
 pip install requests
+pip install pandas
+pip install matplotlib
 ```
 
 ## About Domestic Economy chatbot:  
@@ -17,22 +19,24 @@ pip install requests
 * economibot.py is the bot it self;  
 
 ### chatbot Functions
-`/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
+* `/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
 ![start](img/start.png)  
-`/category` will show all categories already registered in the category table;  
+* `/category` will show all categories already registered in the category table;  
 ![getting category](img/getcategory.png)  
-`/subcategory [category]` will show the subcategories related to a especific `category`;  
+* `/subcategory [category]` will show the subcategories related to a especific `category`;  
 ![getting sub category](img/getsubcat.png)  
-`/income [value]` will save the value assed as a income in the database
+* `/income [value]` will save the value assed as a income in the database
 ![saving income](img/income.png)  
-`/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;
+* `/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;
 ![expenses](img/expenses.png)  
-`/summary [param] [paramII]` will return the summary of data saved on database groupping by `param`. If a second param is passed (`paramII`) the summary will be for `category` and `subcategory`;
+* `/summary [param] [paramII]` will return the summary of data saved on database groupping by `param`. If a second param is passed (`paramII`) the summary will be for `category` and `subcategory`;
 ![expenses](img/summaryparamuser.png)  
 ![expenses](img/summarycategory.png)  
 ![expenses](img/summaryparamII.png)  
-
-:warning: I'm working to make use of SQLite3 relactional tables intead of heaving everything on general table. Althought there are a lot of work to be done, you can check it [here](https://github.com/FelipeSBarros/DomesticEconomy/tree/RelationalDB)
+* `/plot [param]` will return a graphical (:bar_chart:) summary of data saved on database groupping by `param`. :warning: For futher improvement: define a month parameter :bulb:
+![plot user](img/plotuser.png)  
+![plot category](img/plotcategory.png)  
+![plot sub category](img/plotsubcategory.png)  
 
 #### Useful Links  
 Some links that was useful to develop this project and study python:
@@ -44,3 +48,7 @@ Some links that was useful to develop this project and study python:
 * [Matplotlib](https://stackoverflow.com/questions/32244019/how-to-rotate-x-axis-tick-labels-in-pandas-barplot)
 * [cookbook-plotting](https://pandas.pydata.org/pandas-docs/stable/cookbook.html#cookbook-plotting)
 * [Pandas visualization](https://pandas.pydata.org/pandas-docs/stable/visualization.html#visualization-barplot)
+
+### Todo list:
+* make this bot availiable for grooup so a couple can follow what each other is inserting;
+
