@@ -13,7 +13,7 @@ import time
 import urllib # to handle with pecial characters
 import datetime as date # to manage date and time
 from dbZeroEuro import DBHelper # import class and method created to work with sqlite3
-from os.path import basename, dirname
+from os.path import dirname, relpath
 
 TOKEN = API
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -59,7 +59,7 @@ def send_message(text, chat_id, parse_mode = 'markdown', reply_markup = None):
 def send_photo(chat_id, photo):
     data = {'chat_id': chat_id}
     url = URL + 'sendPhoto'
-    files = {'photo': (dirname(photo), open(basename(photo), "rb"))}
+    files = {'photo': (dirname(photo), open(relpath(photo), "rb"))}
     r = requests.get(url, data=data, files=files)
     
 def send_action(chat_id, action = 'typing'):
