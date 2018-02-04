@@ -25,15 +25,15 @@ pip install matplotlib
 ![getting category](img/getcategory.png)  
 * `/subcategory [category]` will show the subcategories related to a especific `category`;  
 ![getting sub category](img/getsubcat.png)  
-* `/income [value]` will save the value assed as a income in the database
+* `/income [value]` will save the value assed as a income in the database  
 ![saving income](img/income.png)  
-* `/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;
+* `/expenses [value] [category] [subcategory]` will save the `value` with `category` and `subcategory` assigned in the database;  
 ![expenses](img/expenses.png)  
-* `/summary [param] [paramII]` will return the summary of data saved on database groupping by `param`. If a second param is passed (`paramII`) the summary will be for `category` and `subcategory`;
+* `/summary [param] [paramII]` will return the summary of data saved on database groupping by `param`. If a second param is passed (`paramII`) the summary will be for `category` and `subcategory`;  
 ![expenses](img/summaryparamuser.png)  
 ![expenses](img/summarycategory.png)  
 ![expenses](img/summaryparamII.png)  
-* `/plot [param]` will return a graphical (:bar_chart:) summary of data saved on database groupping by `param`. :warning: For futher improvement: define a month parameter :bulb:
+* `/plot [param]` will return a graphical (:bar_chart:) summary of data saved on database groupping by `param`. :warning: For futher improvement: define a month parameter :bulb:  
 ![plot user](img/plotuser.png)  
 ![plot category](img/plotcategory.png)  
 ![plot sub category](img/plotsubcategory.png)  
