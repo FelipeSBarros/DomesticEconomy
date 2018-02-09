@@ -8,7 +8,7 @@ virtualenv ZeroEuroBot -p python3
 source ZeroEuroBot/bin/activate
 easy_install -U pip
 pip install requests
-pip install pandas
+sudo atp-get install python3-pandas
 pip install matplotlib
 ```
 
@@ -16,7 +16,7 @@ pip install matplotlib
 
 * setup.py will create the database, tables and insert default values;  
 * dbZeroEuro.py has all the functions related to the database;  
-* economibot.py is the bot it self;  
+* economybot.py is the bot it self;  
 
 ### chatbot Functions
 * `/start` will greeting the user, check if user is already registered in users table. If not, it will be registered;  
@@ -50,5 +50,7 @@ Some links that was useful to develop this project and study python:
 * [Pandas visualization](https://pandas.pydata.org/pandas-docs/stable/visualization.html#visualization-barplot)
 
 ### Todo list:
-* make this bot availiable for grooup so a couple can follow what each other is inserting;
-
+* make this bot availiable for group so a couple can follow what each other is inserting;
+* make it possible to get summary/plot for a defined **month** and **year**;
+* send backup file by e-mail;
+* Change the interacion methods from comands to menus;
