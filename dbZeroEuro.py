@@ -60,16 +60,22 @@ class DBHelper:
         self.conn.execute(stmt, args)
         self.conn.commit()
         
-    def get_summary(self, param = None):
+    def get_summary(self, param = None, month = None, year = None):
         if param == 'category':
-            stmt = "SELECT * from view_catsummary"
-            return [x for x in self.conn.execute(stmt)]
+            stmt = "SELECT category, total from view_catsummary where month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
+            results = self.conn.execute(stmt).fetchall()
+            results = pd.DataFrame(results, columns = ('*Category*', '*Total*'))
+            return results
         elif param == 'subcategory':
-            stmt = "SELECT * from view_scatsummary"
-            return [x for x in self.conn.execute(stmt)]
+            stmt = "SELECT category, subcategory, total from view_scatsummary where month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
+            results = self.conn.execute(stmt).fetchall()
+            results = pd.DataFrame(results, columns = ('*Category*', '*Subcategory*', '*Total*'))
+            return results
         elif param == 'user':
-            stmt = "SELECT * from view_usersummary"
-            return [x for x in self.conn.execute(stmt)]
+            stmt = "SELECT user, total from view_usersummary where month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
+            results = self.conn.execute(stmt).fetchall()
+            results = pd.DataFrame(results, columns = ('*User*', '*Total*'))
+            return results
         else:
             msg = ["Not found: {}".format(param)]
             return msg

@@ -14,6 +14,7 @@ import urllib # to handle with pecial characters
 import datetime as date # to manage date and time
 from dbZeroEuro import DBHelper # import class and method created to work with sqlite3
 from os.path import dirname, relpath
+import pandas as pd
 
 TOKEN = API
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
@@ -115,15 +116,25 @@ def handle_updates(updates):
                     send_message("*Subcategory* options for the category *{}*, are:\n\n{}".format(cat, '\n'.join(subcats)), chat)
             
             if text.startswith("/summary"):
-                if len(text.split(" "))==2:
+                if len(text.split(" "))>=2:
                     param = text.split(" ")[1]
-                    summary = db.get_summary(param)
-                    send_message("*Summary by {}*:".format(param), chat)    
-                    for a in summary:
-                        send_message("{}".format(a), chat)    
-                    #send_message("*Summary*:\n\n{}".format(summary), chat)    
+                    if len(text.split(" "))>=3:
+                        month = text.split(" ")[2]
+                        if len(month) == 1:
+                            month = '0' + month
+                        year = date.date.today().year
+                        if len(text.split(" "))==4:
+                            year = text.split(" ")[3]
+                    else:
+                        month = str(date.date.today().month)
+                        if len(month) == 1:
+                            month = '0' + month
+                        year = date.date.today().year
+                    summary = db.get_summary(param, month, year)
+                    send_message("*Summary by {} for moth {} and year {}*:".format(param, month, year), chat)
+                    send_message("{}".format(summary), chat)
                 else:
-                    send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param]", chat)
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param] [month] [year]\n where [month] and [year] are optional", chat)
 
             if text.startswith("/plot"):
                 if len(text.split(" "))==2:
