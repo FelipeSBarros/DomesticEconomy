@@ -129,7 +129,7 @@ class DBHelper:
         """Create timestamped database copy"""
     
         if not os.path.isdir(backupdir):
-            raise Exception("Backup directory does not exist: {}".format(backupdir))
+            os.makedirs(backupdir)
     
         backup_file = os.path.join(backupdir, os.path.basename(dbfile) + time.strftime("-%Y%m%d-%H%M%S"))
     
