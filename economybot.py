@@ -137,16 +137,38 @@ def handle_updates(updates):
                     send_message("*Wrong parameter sent!*\n you ust send:\n /summary [param] [month] [year]\n where [month] and [year] are optional", chat)
 
             if text.startswith("/plot"):
-                if len(text.split(" "))==2:
+                if len(text.split(" "))>=2:
                     param = text.split(" ")[1]
-                    path = db.get_plots(param)
+                    if len(text.split(" "))>=3:
+                        month = text.split(" ")[2]
+                        if len(month) == 1:
+                            month = '0' + month
+                        year = date.date.today().year
+                        if len(text.split(" "))==4:
+                            year = text.split(" ")[3]
+                    else:
+                        month = str(date.date.today().month)
+                        if len(month) == 1:
+                            month = '0' + month
+                        year = date.date.today().year
+                    path = db.get_plots(param, month, year)
                     if path.startswith('Not'):
                         send_message(path, chat)
                     else:
-                        print(path)
+                        #print(path)
                         send_photo(chat_id = chat, photo = path)
                 else:
-                    send_message("*Wrong parameter sent!*\n you ust send:\n /plotsummary [param]", chat)
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /plot [param]", chat)    
+                #if len(text.split(" "))==2:
+                #    param = text.split(" ")[1]
+                #    path = db.get_plots(param)
+                #    if path.startswith('Not'):
+                #        send_message(path, chat)
+                #    else:
+                #        print(path)
+                #        send_photo(chat_id = chat, photo = path)
+                #else:
+                    #send_message("*Wrong parameter sent!*\n you ust send:\n /plot [param]", chat)
 
             if text.startswith("/backup"):
                 send_message("Building databse backup", chat)    

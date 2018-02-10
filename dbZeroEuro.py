@@ -80,43 +80,43 @@ class DBHelper:
             msg = ["Not found: {}".format(param)]
             return msg
             
-    def get_plots(self, param = None):
+    def get_plots(self, param = None, month = None, year = None):
         plt.style.use('ggplot')
         plotwd = "plots"
         plt.rcParams.update({'figure.autolayout': True})
         if not os.path.exists(plotwd):
             os.makedirs(plotwd)
         if param == 'category':
-            stmt = "SELECT * from view_catsummary ORDER BY 2 DESC"
+            stmt = "SELECT category, total from view_catsummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("Categorias", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res.plot.bar(x="Categorias", y="Value", legend = False, rot=7)
-            path = os.path.join(os.getcwd(), plotwd) + '/Category_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/Category_{}_{}.png'.format(month, year)
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'subcategory':
-            stmt = "SELECT * from view_scatsummary ORDER BY 3 DESC"
+            stmt = "SELECT category, subcategory, total from view_scatsummary WHERE month = '{}' and year = '{}' ORDER BY 3 DESC".format(month, year)
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("Cat", "SubCat", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res["SubCategorias"] = res.Cat + " " + res.SubCat
             res.plot.bar(x = "SubCategorias", y = "Value", legend = False, rot=90)
-            path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_{}_{}.png'.format(month, year)
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'user':
-            stmt = "SELECT * from view_usersummary ORDER BY 2 DESC"
+            stmt = "SELECT user, total from view_usersummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
             res = self.conn.execute(stmt)
             res = res.fetchall()
             colnames = ("User", "Value")
             res = pd.DataFrame(res, columns=colnames)
             res.plot.bar(x="User", y="Value", legend = False, rot=0)
-            path = os.path.join(os.getcwd(), plotwd) + '/User_{}.png'.format(str(datetime.date.today()))
+            path = os.path.join(os.getcwd(), plotwd) + '/User_{}_{}.png'.format(month, year)
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
