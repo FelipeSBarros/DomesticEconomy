@@ -33,7 +33,7 @@ pip install matplotlib
 ![expenses](img/summaryparamuser.png)  
 ![expenses](img/summarycategory.png)  
 ![expenses](img/summaryparamII.png)  
-* `/plot [param]` will return a graphical (:bar_chart:) summary of data saved on database groupping by `param`. :warning: For futher improvement: define a month parameter :bulb:  
+* `/plot [param]` will return a graphical (:bar_chart:) summary of data saved on database groupping by `param`.  
 ![plot user](img/plotuser.png)  
 ![plot category](img/plotcategory.png)  
 ![plot sub category](img/plotsubcategory.png)  
@@ -51,6 +51,6 @@ Some links that was useful to develop this project and study python:
 
 ### Todo list:
 * make this bot availiable for group so a couple can follow what each other is inserting;
-* make it possible to get summary/plot for a defined **month** and **year**;
-* send backup file by e-mail;
+* :heavy_check_mark: make it possible to get summary/plot for a defined **month** and **year**;
+* :heavy_check_mark: send backup file by e-mail;
 * Change the interacion methods from comands to menus;
