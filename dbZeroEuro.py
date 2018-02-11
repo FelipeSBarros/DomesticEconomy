@@ -11,6 +11,13 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import datetime
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+from email import encoders
+from API import email, password
 
 class DBHelper:
     def __init__(self, dbname="gastos.sqlite"):
@@ -125,12 +132,12 @@ class DBHelper:
             return str(path)
 
     # Database Backup function
-    def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup'):
-        """Create timestamped database copy"""
+    def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup', use_tls = True):
     
+        # Create backupdir if not exist
         if not os.path.isdir(backupdir):
             os.makedirs(backupdir)
-    
+        # Create timestamped database copy
         backup_file = os.path.join(backupdir, os.path.basename(dbfile) + time.strftime("-%Y%m%d-%H%M%S"))
     
         connection = sqlite3.connect(dbfile)
@@ -146,6 +153,55 @@ class DBHelper:
         #backupMail.send_mail(send_from = yauser, send_to = dba, text = backup_file, files = backup_file)
         #import backupMail  # function to send backup by email
         # Clean old backup function
+        
+        #sending backup by email
+        send_from = email
+        send_to = email
+        subject = 'BACKUP_'+os.path.basename(backup_file)
+        files = [backup_file]
+        server = 'smtp.gmail.com'
+        port = 587
+        message = backup_file
+        """Compose and send email with provided info and attachments.
+    
+        Args:
+            send_from (str): from name
+            send_to (str): to name
+            subject (str): message title
+            message (str): message body
+            files (list[str]): list of file paths to be attached to email
+            server (str): mail server host name
+            port (int): port number
+            username (str): server auth username
+            password (str): server auth password
+            use_tls (bool): use TLS mode
+            src: https://stackoverflow.com/questions/3362600/how-to-send-email-attachments
+        """
+        msg = MIMEMultipart()
+        msg['From'] = email
+        msg['To'] = COMMASPACE.join(email)
+        msg['Date'] = formatdate(localtime=True)
+        msg['Subject'] = subject
+    
+        msg.attach(MIMEText(message))
+    
+        for path in files:
+            part = MIMEBase('application', "octet-stream")
+            with open(path, 'rb') as file:
+                part.set_payload(file.read())
+            encoders.encode_base64(part)
+            part.add_header('Content-Disposition',
+                            'attachment; filename="{}"'.format(os.path.basename(path)))
+            msg.attach(part)
+    
+        smtp = smtplib.SMTP(server, port)
+        if use_tls:
+            smtp.starttls()
+        smtp.login(email, password)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.quit()
+    
+    # Function to remove old backupfiles
     def clean_data(slef, backup_dir = './backup', NO_OF_DAYS = 7):
         """Delete files older than NO_OF_DAYS days"""
     
