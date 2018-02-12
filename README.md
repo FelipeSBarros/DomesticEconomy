@@ -8,7 +8,7 @@ virtualenv ZeroEuroBot -p python3
 source ZeroEuroBot/bin/activate
 easy_install -U pip
 pip install requests
-sudo atp-get install python3-pandas
+sudo apt-get install python3-pandas
 pip install matplotlib
 ```
 
