@@ -15,7 +15,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
-from email.utils import COMMASPACE, formatdate
+from email.utils import formatdate
 from email import encoders
 from API import email, password
 
@@ -179,7 +179,7 @@ class DBHelper:
         """
         msg = MIMEMultipart()
         msg['From'] = email
-        msg['To'] = COMMASPACE.join(email)
+        msg['To'] = email
         msg['Date'] = formatdate(localtime=True)
         msg['Subject'] = subject
     
