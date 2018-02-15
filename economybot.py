@@ -158,17 +158,7 @@ def handle_updates(updates):
                         #print(path)
                         send_photo(chat_id = chat, photo = path)
                 else:
-                    send_message("*Wrong parameter sent!*\n you ust send:\n /plot [param]", chat)    
-                #if len(text.split(" "))==2:
-                #    param = text.split(" ")[1]
-                #    path = db.get_plots(param)
-                #    if path.startswith('Not'):
-                #        send_message(path, chat)
-                #    else:
-                #        print(path)
-                #        send_photo(chat_id = chat, photo = path)
-                #else:
-                    #send_message("*Wrong parameter sent!*\n you ust send:\n /plot [param]", chat)
+                    send_message("*Wrong parameter sent!*\n you ust send:\n /plot [param] [month] [year]", chat)    
 
             if text.startswith("/backup"):
                 send_message("Building databse backup", chat)    
@@ -177,11 +167,35 @@ def handle_updates(updates):
                     NO_OF_DAYS = int(text.split(" ")[1])
                     send_message("Removing backups with {} days or more".format(NO_OF_DAYS), chat)    
                     db.clean_data(backup_dir = './backup', NO_OF_DAYS = NO_OF_DAYS)
-                    
                 send_message("All done!", chat)    
+            
+            if text.startswith("/sql"):
+                sql = text[5:]
+                msg = db.sql(sql)
+                send_message("{}".format(msg), chat)
+            
+            if text.startswith("/add"):
+                if len(text.split(" ")) == 2:                
+                    cats = db.get_category()
+                    value = text.split(" ")[1]
+                    if value not in cats:
+                        sql = "INSERT INTO category(category) VALUES ('{}')".format(value)
+                        msg = db.sql(sql)
+                        send_message("Value *{}* added on databse".format(value), chat)
+                    else:
+                        msg = 'Not processed: Category *{}* already exists;'.format(value)
+                        send_message(msg, chat)
+                if len(text.split(" ")) == 3:
+                    value, svalue = text.split(" ")[1:]
+                    sql = "INSERT INTO subcategory(catid, subcategory, category) VALUES ((select id from category where category = '{}'), '{}', '{}');".format(value, svalue, value)
+                    msg = db.sql(sql)
+                    msg = "Value *{}* added on database!".format(svalue)
+                    send_message(msg, chat)
+        
         except KeyError:
             pass
-            
+        
+
 def main():
     last_update_id = None
     while True:

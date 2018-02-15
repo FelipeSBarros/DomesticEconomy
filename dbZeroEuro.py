@@ -130,7 +130,25 @@ class DBHelper:
         else:
             path = "Not found: {}".format(param)
             return str(path)
-
+    
+    # Function to mannage SQL from message
+    def sql(self, sql):
+        if sql.upper().startswith("ALTER TABLE"):
+            msg = "ALTER TABLE NOT ALLOWED BY MSG"
+            return msg
+        elif sql.upper().startswith("DROP"):
+            msg = "DROP [TABLE/VIEW] NOT ALLOWED BY MSG"
+            return msg
+        elif sql.upper().startswith("SELECT"):
+            res = self.conn.execute(sql).fetchall()
+            res = pd.DataFrame(res)
+            return res
+        else:
+            self.conn.execute(sql)
+            self.conn.commit()
+            msg = 'All done!'
+            return msg 
+    
     # Database Backup function
     def sqlite3_backup(self, dbfile = 'gastos.sqlite', backupdir = './backup', use_tls = True):
     
