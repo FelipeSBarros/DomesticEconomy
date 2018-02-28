@@ -99,7 +99,7 @@ def handle_updates(updates):
             if text.startswith("/income"):
                 action, value = text.split(" ")
                 send_message("Saving income!!", chat)
-                db.insertIncome(user, int(value), date.date.today())
+                db.insertIncome(user, value, date.date.today())
                 send_message("Well done!\n {} inserted as income!".format(value), chat)
                 
             if text == "/category":
