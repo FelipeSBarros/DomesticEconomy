@@ -83,6 +83,11 @@ class DBHelper:
             results = self.conn.execute(stmt).fetchall()
             results = pd.DataFrame(results, columns = ('*User*', '*Total*'))
             return results
+        elif param == 'balance':
+            stmt = "SELECT action, total from view_action where month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
+            results = self.conn.execute(stmt).fetchall()
+            results = pd.DataFrame(results, columns = ('*Movimento*', '*Total*'))
+            return results
         else:
             msg = ["Not found: {}".format(param)]
             return msg
@@ -124,6 +129,17 @@ class DBHelper:
             res = pd.DataFrame(res, columns=colnames)
             res.plot.bar(x="User", y="Value", legend = False, rot=0)
             path = os.path.join(os.getcwd(), plotwd) + '/User_{}_{}.png'.format(month, year)
+            plt.savefig(path)  # save the figure to file
+            plt.close()
+            return str(path)
+        elif param == 'balance':
+            stmt = "SELECT action, total from view_action WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
+            res = self.conn.execute(stmt)
+            res = res.fetchall()
+            colnames = ("Movimento", "Value")
+            res = pd.DataFrame(res, columns=colnames)
+            res.plot.bar(x="Movimento", y="Value", legend = False, rot=0)
+            path = os.path.join(os.getcwd(), plotwd) + '/Balance_{}_{}.png'.format(month, year)
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
