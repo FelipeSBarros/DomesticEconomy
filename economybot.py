@@ -76,7 +76,11 @@ def handle_updates(updates):
     
     for update in updates["result"]:
         try:
-            user = update["message"]["chat"]["first_name"]
+            if "from" in updates['result'][0]['message'].keys():
+                user = update["message"]["from"]["first_name"]
+            else:
+                user = update["message"]["chat"]["first_name"]
+            
             text = update["message"]["text"]
             chat = update["message"]["chat"]["id"]
             
@@ -120,15 +124,12 @@ def handle_updates(updates):
                     param = text.split(" ")[1]
                     if len(text.split(" "))>=3:
                         month = text.split(" ")[2]
-                        if len(month) == 1:
-                            month = '0' + month
+                        month = month.zfill(2)
                         year = date.date.today().year
                         if len(text.split(" "))==4:
                             year = text.split(" ")[3]
                     else:
-                        month = str(date.date.today().month)
-                        if len(month) == 1:
-                            month = '0' + month
+                        month = str(date.date.today().month).zfill(2)
                         year = date.date.today().year
                     summary = db.get_summary(param, month, year)
                     send_message("*Summary by {} for moth {} and year {}*:".format(param, month, year), chat)
