@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-https://github.com/python-telegram-bot/python-telegram-bot
 Created on Fri Jan 12 04:21:29 2018
 
-@author: felipe
+@author: Felipe Sodre Mendes Barros
+https://github.com/FelipeSBarros
 """
 
 import json 
@@ -96,9 +96,12 @@ def handle_updates(updates):
                 send_message("Also, you can save your incomes! Just type `/income [value]` \n `/income 1000`", chat)
                 
             if text.startswith("/expenses"):
-                action, value, category, subcategory = text.split(" ")
-                db.insertExpenses(user, category, subcategory, float(value), date.date.today())
-                send_message("Ok, I'm done!\n {} inserted as expenses".format(value), chat)
+                if len(text.split(" "))<4:
+                    send_message("Sorry, I couldnt save your expenses. Something is missing", chat)
+                else:
+                    action, value, category, subcategory = text.split(" ")
+                    db.insertExpenses(user, category, subcategory, float(value), date.date.today())
+                    send_message("Ok, I'm done!\n {} inserted as expenses".format(value), chat)
 
             if text.startswith("/income"):
                 action, value = text.split(" ")
