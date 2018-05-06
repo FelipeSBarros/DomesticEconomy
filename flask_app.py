@@ -26,7 +26,7 @@ telepot.api._pools = {
 }
 telepot.api._onetime_pool_spec = (urllib3.ProxyManager, dict(proxy_url=proxy_url, num_pools=1, maxsize=1, retries=False, timeout=30))
 
-secret = "25B526B22"
+secret = "***********"
 bot = telepot.Bot(API)
 bot.setWebhook("https://FelipeB4rros.pythonanywhere.com/{}".format(secret), max_connections=1)
 
