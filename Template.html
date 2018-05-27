@@ -5,12 +5,17 @@
     <title>{{ title }}</title>
 </head>
 <body>
-    <h2>Balanço geal</h2>
-<br>
-
-  <img src={{ balanco }} alt="Balanço">
-<img src={{ UsrMonth }} alt="Users Expenses by Month">
-<img src={{ CatMonth }} alt="Total amount by category">
-
+    <h1>Relatório de economia doméstica</h1>
+    <br>
+    <h2> {{ month_name }} / {{ year }}</h2>
+    <br>
+    <h3>Balanço geral</h3>
+    <img src={{ balanco }} alt="Balanço">
+    <br>
+    <h3>Gastor por mês para cada usuário</h3>
+    <img src={{ UsrMonth }} alt="Users Expenses by Month">
+    <br>
+    <h3>Gastos por mês para cada categoría</h3>
+    <img src={{ CatMonth }} alt="Total amount by category">
 </body>
 </html>
