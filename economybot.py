@@ -144,20 +144,19 @@ def handle_updates(updates):
                 if len(text.split(" "))>=2:
                     param = text.split(" ")[1]
                     if len(text.split(" "))>=3:
-                        month = text.split(" ")[2]
-                        if len(month) == 1:
-                            month = '0' + month
+                        month = text.split(" ")[2].zfill(2)
                         year = date.date.today().year
                         if len(text.split(" "))==4:
                             year = text.split(" ")[3]
                     else:
-                        month = str(date.date.today().month)
-                        if len(month) == 1:
-                            month = '0' + month
+                        month = str(date.date.today().month).zfill(2)
                         year = date.date.today().year
                     path = db.get_plots(param, month, year)
                     if path.startswith('Not'):
                         send_message(path, chat)
+                    elif len(path) > 1:
+                        for plot in path:
+                            send_photo(chat_id=chat, photo=plot)
                     else:
                         #print(path)
                         send_photo(chat_id = chat, photo = path)

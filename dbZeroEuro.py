@@ -93,56 +93,81 @@ class DBHelper:
             return msg
             
     def get_plots(self, param = None, month = None, year = None):
+        # Few configs
         plt.style.use('ggplot')
+        # plt.style.use('fivethirtyeight')
         plotwd = "plots"
         plt.rcParams.update({'figure.autolayout': True})
         if not os.path.exists(plotwd):
             os.makedirs(plotwd)
         if param == 'category':
-            stmt = "SELECT category, total from view_catsummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
-            res = self.conn.execute(stmt)
-            res = res.fetchall()
-            colnames = ("Categorias", "Value")
-            res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="Categorias", y="Value", legend = False, rot=7)
-            path = os.path.join(os.getcwd(), plotwd) + '/Category_{}_{}.png'.format(month, year)
+            CatPlot = pd.read_sql("SELECT category, total from view_catsummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year), self.conn)
+            CatPlot.plot.bar(x="category", y="total", legend = False, rot=7)
+            path = os.path.join(os.getcwd(), plotwd) + '/Category_plot.png'
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'subcategory':
-            stmt = "SELECT category, subcategory, total from view_scatsummary WHERE month = '{}' and year = '{}' ORDER BY 3 DESC".format(month, year)
-            res = self.conn.execute(stmt)
-            res = res.fetchall()
-            colnames = ("Cat", "SubCat", "Value")
-            res = pd.DataFrame(res, columns=colnames)
-            res["SubCategorias"] = res.Cat + " " + res.SubCat
-            res.plot.bar(x = "SubCategorias", y = "Value", legend = False, rot=90)
-            path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_{}_{}.png'.format(month, year)
+            SubCatPlot = pd.read_sql("SELECT category, subcategory, total from view_scatsummary WHERE month = '{}' and year = '{}' ORDER BY 3 DESC".format(month, year), self.conn)
+            SubCatPlot["SubCategorias"] = SubCatPlot.category + " " + SubCatPlot.subcategory
+            SubCatPlot.plot.bar(x = "SubCategorias", y = "total", legend = False, rot=90)
+            path = os.path.join(os.getcwd(), plotwd) + '/SubCategory_plot.png'
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
         elif param == 'user':
-            stmt = "SELECT user, total from view_usersummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
-            res = self.conn.execute(stmt)
-            res = res.fetchall()
-            colnames = ("User", "Value")
-            res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="User", y="Value", legend = False, rot=0)
-            path = os.path.join(os.getcwd(), plotwd) + '/User_{}_{}.png'.format(month, year)
+            UserPlot = pd.read_sql("SELECT user, total from view_usersummary WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year), self.conn)
+            UserPlot.pivot_table(columns="user").plot.bar(legend = True, rot=0)
+            path = os.path.join(os.getcwd(), plotwd) + '/User_plot.png'
             plt.savefig(path)  # save the figure to file
             plt.close()
             return str(path)
-        elif param == 'balance':
-            stmt = "SELECT action, total from view_action WHERE month = '{}' and year = '{}' ORDER BY 2 DESC".format(month, year)
-            res = self.conn.execute(stmt)
-            res = res.fetchall()
-            colnames = ("Movimento", "Value")
-            res = pd.DataFrame(res, columns=colnames)
-            res.plot.bar(x="Movimento", y="Value", legend = False, rot=0)
-            path = os.path.join(os.getcwd(), plotwd) + '/Balance_{}_{}.png'.format(month, year)
-            plt.savefig(path)  # save the figure to file
+        elif param == 'historico':
+            # Retrieving data
+            df_general = pd.read_sql("SELECT general.id, action.action, users.user, category.category, subcategory.subcategory, general.value, date  FROM general INNER JOIN action on action.id = general.action INNER JOIN users on users.id = general.user INNER JOIN category on category.id = general.category INNER JOIN subcategory on subcategory.id = general.subcategory;", self.conn)
+            df_receitas = pd.read_sql("SELECT general.id, action.action, users.user, general.category, general.subcategory, general.value, date  FROM general JOIN action on action.id = general.action JOIN users on users.id = general.user WHERE action.action = 'receita'", self.conn)
+            df_completo = df_general.append(df_receitas)
+
+            # organizing data
+            df_completo["date"] = pd.to_datetime(df_completo["date"])
+            df_general["date"] = pd.to_datetime(df_general["date"])
+            df_completo['year'] = pd.DatetimeIndex(df_completo['date']).year
+            df_general['year'] = pd.DatetimeIndex(df_general['date']).year
+            df_completo['month'] = pd.DatetimeIndex(df_completo['date']).month
+            df_general['month'] = pd.DatetimeIndex(df_general['date']).month
+            df_completo.set_index(["date"], inplace=True)
+            df_general.set_index(["date"], inplace=True)
+
+            # Domestic Balance
+            action_Month = df_completo[["action", "month", "value"]]
+            action_Month = action_Month.groupby(by=["action", "month"], as_index=False).sum()
+            action_Month = action_Month.pivot_table(index="month", columns="action", values="value").fillna(value=0)
+            action_Month.plot()
+            plt.legend(loc=2, ncol=2).get_frame().set_alpha(0)
+            Balanco_path = os.path.join(os.getcwd(), plotwd) + '/balanco.png'
+            plt.savefig(Balanco_path)  # save the figure to file
             plt.close()
-            return str(path)
+
+            # Category/month
+            cat_Month = df_general[["category", "month", "value"]]
+            cat_Month = cat_Month.groupby(by=["category", "month"], as_index=False).sum()
+            cat_Month = cat_Month.pivot_table(index="month", columns="category", values="value").fillna(value=0)
+            cat_Month.plot()
+            plt.legend(loc=2, ncol=3).get_frame().set_alpha(0)
+            CatMonth_path = os.path.join(os.getcwd(), plotwd) + '/CatMonth.png'
+            plt.savefig(CatMonth_path)  # save the figure to file
+            plt.close()
+
+            # user/month
+            user_Month = df_general[["user", "month", "value"]]
+            user_Month = user_Month.groupby(by=["user", "month"], as_index=False).sum()
+            user_Month = user_Month.pivot_table(index="month", columns="user", values="value").fillna(value=0)
+            user_Month.plot()
+            plt.legend(loc=2, ncol=2).get_frame().set_alpha(0)
+            UsrMonth_path = os.path.join(os.getcwd(), plotwd) + '/UsrMonth_path.png'
+            plt.savefig(UsrMonth_path)  # save the figure to file
+            plt.close()
+            return [Balanco_path, CatMonth_path, UsrMonth_path]
         else:
             path = "Not found: {}".format(param)
             return str(path)
