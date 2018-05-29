@@ -107,10 +107,10 @@ def telegram_webhook():
                 path = db.get_plots(param, month, year)
                 if path.startswith('Not'):
                     bot.sendMessage(chat_id, path, parse_mode = 'markdown')
-                elif len(path) > 1:
+                elif isinstance(path, list):
                     for plot in path:
-                        graph = open(relpath(plot), "rb")
-                        sendPhoto(chat_id, graph)
+                        graph = open(relpath(str(plot)), "rb")
+                        bot.sendPhoto(chat_id, graph)
                 else:
                     graph = open(relpath(path), "rb")
                     #graph = {'photo': (dirname(photo), open(relpath(photo), "rb"))}

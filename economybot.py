@@ -154,7 +154,7 @@ def handle_updates(updates):
                     path = db.get_plots(param, month, year)
                     if path.startswith('Not'):
                         send_message(path, chat)
-                    elif len(path) > 1:
+                    elif isinstance(path, list):
                         for plot in path:
                             send_photo(chat_id=chat, photo=plot)
                     else:
