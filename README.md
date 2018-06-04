@@ -10,9 +10,9 @@ This project aims to develop a chatbot to easly save information of expenses and
 :heavy_check_mark: You can register a **month summary in a graphical way** of your expenses (see `/plot` comand);  
 :heavy_check_mark: You can **send sql query** by message (see `/sql` comand);  
 :heavy_check_mark: You can **backup your database** (see `/backup` comand);  
-:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: This is already integrated in `master` branch
-:heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook
-:heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes using[see chatbot-functions](#chatbot-functions)
+:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: This is already integrated in `master` branch;  
+:heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook;  
+:heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes using[see chatbot-functions](#chatbot-functions);  
 
 ## Few things I'm planning to improve later:
 - [ ] Improve UX/UI by using menus;  
