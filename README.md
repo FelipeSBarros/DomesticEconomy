@@ -12,7 +12,7 @@ This project aims to develop a chatbot to easly save information of expenses and
 :heavy_check_mark: You can **backup your database** (see `/backup` comand);  
 :heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: This is already integrated in `master` branch
 :heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook
-:heavy_check_mark: you can Have a monthly report of all your expenses and incomes [see #Report](#Report)
+:heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes using[see chatbot-functions](#chatbot-functions)
 
 ## Few things I'm planning to improve later:
 - [ ] Improve UX/UI by using menus;  
@@ -77,6 +77,7 @@ e.g.: `/plot category 01 2018`
 ![plot user](img/plotuser.png)  
 ![plot category](img/plotcategory.png)  
 ![plot sub category](img/plotsubcategory.png)  
+![plot historico](img/plothistorico.png)  
 
 * `/backup` will create and save a database backup in `backup` folder. Also the backup file will be sent by e-mail (:warning: see API.py).  
 e.g.: `/backup`  
@@ -101,4 +102,3 @@ Some links that was useful to develop this project and study python:
 * [Matplotlib](https://stackoverflow.com/questions/32244019/how-to-rotate-x-axis-tick-labels-in-pandas-barplot)
 * [cookbook-plotting](https://pandas.pydata.org/pandas-docs/stable/cookbook.html#cookbook-plotting)
 * [Pandas visualization](https://pandas.pydata.org/pandas-docs/stable/visualization.html#visualization-barplot)
-
