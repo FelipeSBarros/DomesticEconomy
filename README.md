@@ -10,7 +10,7 @@ This project aims to develop a chatbot to easly save information of expenses and
 :heavy_check_mark: You can register a **month summary in a graphical way** of your expenses (see `/plot` comand);  
 :heavy_check_mark: You can **send sql query** by message (see `/sql` comand);  
 :heavy_check_mark: You can **backup your database** (see `/backup` comand);  
-:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: This is already integrated in `master` branch;  
+:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: **This is already integrated in `master` branch**;  
 :heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook;  
 :heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes using[see chatbot-functions](#chatbot-functions);  
 
@@ -36,7 +36,7 @@ pip install requests
 * **Bot_run.sh**: a bash script to keep bot running even after it breaks;
 * **API.py**: You must create this file where you should put the **bot key**, **user-email** & **email password**;  
  * **Key**: is needed to use the bot; Be careful to keep it save;  
- * **user-email** & **email password**: will be used on `/backup` function (see `/backup`) to send the database backup by e-mail;  
+ * **user-email** and **email password**: will be used on `/backup` function (see `/backup`) to send the database backup by e-mail;  
 This file should be like:  
 ```
 API = '12312312ADAsxlclncxca'
@@ -79,18 +79,16 @@ e.g.: `/plot category 01 2018`
 ![plot sub category](img/plotsubcategory.png)  
 ![plot historico](img/plothistorico.png)  
 
-* `/backup` will create and save a database backup in `backup` folder. Also the backup file will be sent by e-mail (:warning: see API.py).  
+* `/backup` will create and save a database backup in `backup` folder. Also the backup file will be sent by e-mail (:warning: **see [API.py](#about-files-and-codes)**).  
 e.g.: `/backup`  
 
-* `/add [param] [paramII]` will create and new category or subcategory. When the command `/add` is sent with param, only, the function will check if `param` already exists as category. Otherwise, will be inserted in category table. If `/add` is sent with both `[param]` and `[paramII]`, the `paramII` will be save as subcategory with relation to `param` category.
-:warning: If intending to create a new category and subcategory, first create the category (eg.: `/add newCategory`) to later save the new subcategory related to the category previusly created (e.g.: `/add newCategory newSubCategory`).  
+* `/add [param] [paramII]` will create and new category or subcategory. When the command `/add` is sent with param, only, the function will check if `param` already exists as category. Otherwise, will be inserted in category table. If `/add` is sent with both `[param]` and `[paramII]`, the `paramII` will be save as subcategory with relation to `param` category.  
+:warning: **If intending to create a new category and subcategory, first create the category** (eg.: `/add newCategory`) to later save the new subcategory related to the category previusly created (e.g.: `/add newCategory newSubCategory`).  
 
 
 * `/sql` send a sql query and the results sent by message.  
-:warning: commands like ALTER TABLE or DROP TABLE won't be acceted. This can be changed on economybot.py.  
+:warning: **commands like ALTER TABLE or DROP TABLE won't be accepted**. This can be changed on economybot.py.  
 e.g.: `/sql select * from view_general limit 3`  
-
-### Report
 
 #### Useful Links  
 Some links that was useful to develop this project and study python:
