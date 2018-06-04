@@ -93,30 +93,28 @@ def telegram_webhook():
                 bot.sendMessage(chat_id, "*Wrong parameter sent!*\n you ust send:\n /summary [param] [month] [year]\n where [month] and [year] are optional", parse_mode = 'markdown')
 
         if text.startswith("/plot"):
-            #bot.sendMessage(chat_id, "/plot [param] [month] [year]")
-            if len(text.split(" "))>=2:
+            if len(text.split(" ")) >= 2:
                 param = text.split(" ")[1]
-                if len(text.split(" "))>=3:
+                if len(text.split(" ")) >= 3:
                     month = text.split(" ")[2].zfill(2)
                     year = date.date.today().year
-                    if len(text.split(" "))==4:
+                    if len(text.split(" ")) == 4:
                         year = text.split(" ")[3]
                 else:
                     month = str(date.date.today().month).zfill(2)
                     year = date.date.today().year
                 path = db.get_plots(param, month, year)
-                if path.startswith('Not'):
-                    bot.sendMessage(chat_id, path, parse_mode = 'markdown')
-                elif isinstance(path, list):
+                if isinstance(path, list):
                     for plot in path:
-                        graph = open(relpath(str(plot)), "rb")
+                        graph = open(relpath(plot), "rb")
                         bot.sendPhoto(chat_id, graph)
+                elif path.startswith('Not'):
+                    bot.sendMenssage(chat_id, path)
                 else:
                     graph = open(relpath(path), "rb")
-                    #graph = {'photo': (dirname(photo), open(relpath(photo), "rb"))}
                     bot.sendPhoto(chat_id, graph)
             else:
-                bot.sendMessage(chat_id, "*Wrong parameter sent!*\n you ust send:\n /plot [param] [month] [year]", parse_mode = 'markdown')
+                bot.sendMessage(chat_id, "*Wrong parameter sent!*\n you ust send:\n /plot [param] [month] [year]", parse_mode='markdown')
 
 
         if text.startswith("/backup"):

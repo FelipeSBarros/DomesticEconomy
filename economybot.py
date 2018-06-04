@@ -152,11 +152,11 @@ def handle_updates(updates):
                         month = str(date.date.today().month).zfill(2)
                         year = date.date.today().year
                     path = db.get_plots(param, month, year)
-                    if path.startswith('Not'):
-                        send_message(path, chat)
-                    elif isinstance(path, list):
+                    if isinstance(path, list):
                         for plot in path:
                             send_photo(chat_id=chat, photo=plot)
+                    elif path.startswith('Not'):
+                        send_message(path, chat)
                     else:
                         #print(path)
                         send_photo(chat_id = chat, photo = path)
