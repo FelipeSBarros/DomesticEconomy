@@ -1,3 +1,5 @@
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 # Zero Euro Bot: Chat bot for domestic cash flow control  
 
 This project aims to develop a chat bot to easly save information of expenses and incomes on Domestic Economy, although it can be used in different approaches;
@@ -17,7 +19,10 @@ This project aims to develop a chat bot to easly save information of expenses an
 
 ## Few things I'm planning to improve later:
 - [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
-- [ ] Refactor using [SQLAlchemy](https://www.sqlalchemy.org/) on database manegement;
+- [ ] Refactor Data base management:
+  - [SQLAlchemy](https://www.sqlalchemy.org/);
+  - [Alembique](https://alembic.sqlalchemy.org/en/latest/);
+  - initials data;
 - [ ] Add test;
 - [ ] Add Github Actions;
 - [ ] Improve UX/UI by using buttons menu;  
