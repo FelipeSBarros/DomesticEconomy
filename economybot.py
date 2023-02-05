@@ -8,7 +8,7 @@ https://github.com/FelipeSBarros
 
 import json 
 import requests
-from API import API # bot API
+from API import API # bot API.py
 import time
 import urllib # to handle with pecial characters
 import datetime as date # to manage date and time

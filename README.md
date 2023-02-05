@@ -30,6 +30,9 @@ easy_install -U pip
 pip install requests
 ```
 
+* run `python setup.py´
+* `sh Bot_run.sh`
+
 ### About files and codes:  
   
 * **setup.py**: will create the database, tables and insert default values. 

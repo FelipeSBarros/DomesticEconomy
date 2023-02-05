@@ -10,7 +10,7 @@ from flask import Flask, request
 import telepot
 import urllib3
 import json
-from API import API # bot API
+from API import API # bot API.py
 import time
 import urllib # to handle with pecial characters
 import datetime as date # to manage date and time
