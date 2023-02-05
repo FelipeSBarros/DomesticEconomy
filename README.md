@@ -1,21 +1,24 @@
-# Zero Euro Bot: Chat Bot para controle financeiro
-This project aims to develop a chatbot to easly save information of expenses and income on Domestic Economy, althought it can be used in different approaches;
+# Zero Euro Bot: Chat bot for domestic cash flow control  
 
-## About Domestic Economy chatbot:  
+This project aims to develop a chat bot to easly save information of expenses and incomes on Domestic Economy, although it can be used in different approaches;
+
+## About Domestic Economy chat bot:  
   
 :heavy_check_mark: You can register your **expenses** (see `/expenses` comand), informing a category and a subcategory (see `/category` & `/subcategory` comands);  
 :heavy_check_mark: You can **add new cetegory & subcategory** (see `/add` comand);  
 :heavy_check_mark: You can register your **incomes** (see `/income` comand);  
 :heavy_check_mark: You can retrieve a **month summary** of your expenses (see `/summary` comand);  
-:heavy_check_mark: You can register a **month summary in a graphical way** of your expenses (see `/plot` comand);  
+:heavy_check_mark: You can retrieve a **month summary in a graphical way** of your expenses (see `/plot` comand);  
 :heavy_check_mark: You can **send sql query** by message (see `/sql` comand);  
 :heavy_check_mark: You can **backup your database** (see `/backup` comand);  
-:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes:couple:; :warning: **This is already integrated in `master` branch**;  
+:heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes :couple:;  
 :heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook;  
-:heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes using[see chatbot-functions](#chatbot-functions);  
+:heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes [see chatbot-functions](#chatbot-functions);  
 
 ## Few things I'm planning to improve later:
-- [ ] Improve UX/UI by using menus;  
+- [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
+- [ ] Refactor using [SQLAlchemy](https://www.sqlalchemy.org/) on database manegement;
+- [ ] Improve UX/UI by using buttons menu;  
 - [ ] Implement comando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
 
 ### Setting up a virtualenv

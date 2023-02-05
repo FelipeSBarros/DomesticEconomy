@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "domesticeconomy"
+version = "0.1.0"
+description = "A Telegram chat bot to facilitate domestic cash flow registration"
+authors = ["Felipe Sodré <felipe.b4rros@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+datetime = "^5.0"
+requests = "^2.28.2"
+pandas = "^1.5.3"
+matplotlib = "^3.6.3"
+flask = "^2.2.2"
+telepot = "^12.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
