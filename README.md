@@ -18,6 +18,8 @@ This project aims to develop a chat bot to easly save information of expenses an
 ## Few things I'm planning to improve later:
 - [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
 - [ ] Refactor using [SQLAlchemy](https://www.sqlalchemy.org/) on database manegement;
+- [ ] Add test;
+- [ ] Add Github Actions;
 - [ ] Improve UX/UI by using buttons menu;  
 - [ ] Implement comando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
 
