@@ -18,6 +18,7 @@ This project aims to develop a chat bot to easly save information of expenses an
 :heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes [see chatbot-functions](#chatbot-functions);  
 
 ## Few things I'm planning to improve later:
+- [X] Refactor using [dotenv](https://pypi.org/project/python-dotenv/)
 - [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
 - [ ] Refactor Data base management:
   - [SQLAlchemy](https://www.sqlalchemy.org/);
@@ -47,12 +48,15 @@ pip install requests
 * **dbZeroEuro.py**: has all the functions related to the database: insert & retrieve data;  
 * **economybot.py**: is the bot it self. Mannage the text sent to bot and call the according functions;  
 * **Bot_run.sh**: a bash script to keep bot running even after it breaks;
-* **API.py**: You must create this file where you should put the **bot key**, **user-email** & **email password**;  
+* **.env**: You must create this file where you should put the **bot key**, **user-email** & **email password**;  
  * **Key**: is needed to use the bot; Be careful to keep it save;  
  * **user-email** and **email password**: will be used on `/backup` function (see `/backup`) to send the database backup by e-mail;  
 This file should be like:  
+
 ```
-API = '12312312ADAsxlclncxca'
+API = '12312312ADAsxlclncxca' # Bot token
+PYANYWHERE_SECRET = "***********"
+PYANYWHERE_USER = 'USER'
 email = 'your_email@host.com'
 password = 'your_password'
 ```  
