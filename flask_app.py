@@ -19,7 +19,7 @@ from dbZeroEuro import DBHelper  # import class and method created to work with 
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
-PYANYWHERE_PASSWORD = os.getenv("PYANYWHERE_PASSWORD")
+PYANYWHERE_SECRET = os.getenv("PYANYWHERE_SECRET")
 PYANYWHERE_USER = os.getenv("PYANYWHERE_USER")
 db = DBHelper()
 
@@ -36,14 +36,14 @@ telepot.api._onetime_pool_spec = (
 
 bot = telepot.Bot(BOT_TOKEN)
 bot.setWebhook(
-    f"https://{PYANYWHERE_USER}.pythonanywhere.com/{PYANYWHERE_PASSWORD}",
+    f"https://{PYANYWHERE_USER}.pythonanywhere.com/{PYANYWHERE_SECRET}",
     max_connections=1,
 )
 
 app = Flask(__name__)
 
 
-@app.route("/{}".format(PYANYWHERE_PASSWORD), methods=["POST"])
+@app.route("/{}".format(PYANYWHERE_SECRET), methods=["POST"])
 def telegram_webhook():
     update = request.get_json()
     if "message" in update:

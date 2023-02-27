@@ -56,7 +56,7 @@ This file should be like:
 
 ```
 BOT_TOKEN = '12312312ADAsxlclncxca'
-PYANYWHERE_PASSWORD = "***********"
+PYANYWHERE_SECRET = "***********" # random number
 PYANYWHERE_USER = 'USER'
 email = 'your_email@host.com'
 password = 'your_password'
