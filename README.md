@@ -2,17 +2,18 @@
 
 # Zero Euro Bot: Chat bot for domestic cash flow control  
 
-This project aims to develop a chat bot to easly save information of expenses and incomes on Domestic Economy, although it can be used in different approaches;
+This project builds a chatbot to easily save domestic economy expenses and incomes. 
+It can also be used in different contexts;
 
-## About Domestic Economy chat bot:  
+## Domestic Economy chatbot functionalities:  
   
-:heavy_check_mark: You can register your **expenses** (see `/expenses` comand), informing a category and a subcategory (see `/category` & `/subcategory` comands);  
-:heavy_check_mark: You can **add new cetegory & subcategory** (see `/add` comand);  
-:heavy_check_mark: You can register your **incomes** (see `/income` comand);  
-:heavy_check_mark: You can retrieve a **month summary** of your expenses (see `/summary` comand);  
-:heavy_check_mark: You can retrieve a **month summary in a graphical way** of your expenses (see `/plot` comand);  
-:heavy_check_mark: You can **send sql query** by message (see `/sql` comand);  
-:heavy_check_mark: You can **backup your database** (see `/backup` comand);  
+:heavy_check_mark: You can register your **expenses** (see `/expenses` command), informing a category and a subcategory (see `/category` & `/subcategory` commands);  
+:heavy_check_mark: You can **add new category & subcategory** (see `/add` command);  
+:heavy_check_mark: You can register your **incomes** (see `/income` command);  
+:heavy_check_mark: You can retrieve a **month summary** of your expenses (see `/summary` command);  
+:heavy_check_mark: You can retrieve a **month summary in a graphical way** of your expenses (see `/plot` command);  
+:heavy_check_mark: You can **send sql query** by message (see `/sql` command);  
+:heavy_check_mark: You can **back up your database** (see `/backup` command);  
 :heavy_check_mark: you can use it on a group chat with people yout share your expenses and incomes :couple:;  
 :heavy_check_mark: you can Have this chatbot deploy in [pythonanywherer](www.pythonanywhere.com) with a **flask** webhook;  
 :heavy_check_mark: you can Have a **timeseries** graphs of all your expenses and incomes [see chatbot-functions](#chatbot-functions);  
@@ -27,7 +28,7 @@ This project aims to develop a chat bot to easly save information of expenses an
 - [ ] Add test;
 - [ ] Add Github Actions;
 - [ ] Improve UX/UI by using buttons menu;  
-- [ ] Implement comando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
+- [ ] Implement commando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
 
 ### Setting up a virtualenv
 ```
@@ -54,8 +55,8 @@ pip install requests
 This file should be like:  
 
 ```
-API = '12312312ADAsxlclncxca' # Bot token
-PYANYWHERE_SECRET = "***********"
+BOT_TOKEN = '12312312ADAsxlclncxca'
+PYANYWHERE_PASSWORD = "***********"
 PYANYWHERE_USER = 'USER'
 email = 'your_email@host.com'
 password = 'your_password'

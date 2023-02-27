@@ -7,18 +7,20 @@ https://github.com/FelipeSBarros
 """
 
 import datetime as date  # to manage date and time
+import os
 from os.path import relpath
 
 import telepot
 import urllib3
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 from flask import Flask, request
 
 from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
 
-TOKEN = dotenv_values()["API"]
-SECRET = dotenv_values()["PYANYWHERE_SECRET"]
-USER = dotenv_values()["PYANYWHERE_USER"]
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+PYANYWHERE_PASSWORD = os.getenv("PYANYWHERE_PASSWORD")
+PYANYWHERE_USER = os.getenv("PYANYWHERE_USER")
 db = DBHelper()
 
 proxy_url = "http://proxy.server:3128"
@@ -32,13 +34,16 @@ telepot.api._onetime_pool_spec = (
     dict(proxy_url=proxy_url, num_pools=1, maxsize=1, retries=False, timeout=30),
 )
 
-bot = telepot.Bot(TOKEN)
-bot.setWebhook(f"https://{USER}.pythonanywhere.com/{SECRET}", max_connections=1)
+bot = telepot.Bot(BOT_TOKEN)
+bot.setWebhook(
+    f"https://{PYANYWHERE_USER}.pythonanywhere.com/{PYANYWHERE_PASSWORD}",
+    max_connections=1,
+)
 
 app = Flask(__name__)
 
 
-@app.route("/{}".format(SECRET), methods=["POST"])
+@app.route("/{}".format(PYANYWHERE_PASSWORD), methods=["POST"])
 def telegram_webhook():
     update = request.get_json()
     if "message" in update:

@@ -17,14 +17,16 @@ from email.utils import formatdate
 
 import matplotlib.pyplot as plt
 import pandas as pd
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
-EMAIL = dotenv_values()["email"]
-PASSWORD = dotenv_values()["password"]
+load_dotenv()
+EMAIL = os.getenv("email")
+PASSWORD = os.getenv("password")
+DB_NAME = os.getenv("password")
 
 
 class DBHelper:
-    def __init__(self, dbname="gastos.sqlite"):
+    def __init__(self, dbname=DB_NAME):
         self.dbname = dbname
         self.conn = sqlite3.connect(dbname)
 

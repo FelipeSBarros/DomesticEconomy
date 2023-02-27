@@ -8,6 +8,7 @@ https://github.com/FelipeSBarros
 
 import datetime as date  # to manage date and time
 import json
+import os
 import time
 import urllib  # to handle with pecial characters
 from os.path import dirname, relpath
@@ -15,12 +16,13 @@ from os.path import dirname, relpath
 import requests
 
 # from API import API # bot API.py
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
 
-TOKEN = dotenv_values()["API"]
-URL = f"https://api.telegram.org/bot{TOKEN}/"
+load_dotenv()
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 NL = "\n"
 db = DBHelper()
 
