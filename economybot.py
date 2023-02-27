@@ -10,7 +10,7 @@ import datetime as date  # to manage date and time
 import json
 import os
 import time
-import urllib  # to handle with pecial characters
+import urllib  # to handle with special characters
 from os.path import dirname, relpath
 
 import requests

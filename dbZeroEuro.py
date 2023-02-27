@@ -22,7 +22,7 @@ from dotenv import load_dotenv
 load_dotenv()
 EMAIL = os.getenv("email")
 PASSWORD = os.getenv("password")
-DB_NAME = os.getenv("password")
+DB_NAME = os.getenv("DB_NAME")
 
 
 class DBHelper:
