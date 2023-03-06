@@ -14,6 +14,7 @@ matplotlib = "^3.6.3"
 flask = "^2.2.2"
 telepot = "^12.7"
 python-dotenv = "^0.21.1"
+sqlalchemy = "^2.0.4"
 
 
 [build-system]
