@@ -1,18 +1,33 @@
 import os
+from typing_extensions import Annotated
 
-from dotenv import load_dotenv
+from sqlalchemy.schema import FetchedValue
 from datetime import datetime
-from typing import List, Optional
+from sqlalchemy import func
+from dotenv import load_dotenv
 from sqlalchemy import String, Float, DateTime, ForeignKey, create_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship, Session
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    mapped_column,
+    relationship,
+    sessionmaker,
+)
 
 load_dotenv()
 DB_NAME = os.getenv("DB_NAME")
 
 engine = create_engine(f"sqlite:///{DB_NAME}", echo=True)
 
+Session = sessionmaker(bind=engine)
 
-class Base(DeclarativeBase):
+timestamp = Annotated[
+    datetime,
+    mapped_column(nullable=False, server_default=func.CURRENT_TIMESTAMP()),
+]
+
+
+class Base(DeclarativeBase):  # todo Base = declarative_base()
     pass
 
 
@@ -30,11 +45,11 @@ class General(Base):
     category: Mapped[int] = mapped_column(ForeignKey("category.id"))
     subcategory: Mapped[int] = mapped_column(ForeignKey("subcategory.id"))
     value: Mapped[float] = mapped_column(Float)
-    created_at: Mapped[datetime] = mapped_column(DateTime)
-    updated_al: Mapped[datetime] = mapped_column(DateTime)
+    created_at: Mapped[timestamp]
+    updated_at: Mapped[timestamp]
 
     def __repr__(self):
-        return f"Genetal(id={self.id}, action_id={self.action.name}"
+        return f"Genetal(id={self.id}, action_id={self.action.name}, value={self.value}"
 
 
 class Action(Base):
@@ -42,6 +57,8 @@ class Action(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(10))  # todo mudar de action para name
+    created_at: Mapped[timestamp]
+    updated_at: Mapped[timestamp]
 
     def __repr__(self) -> str:
         return f"Action(id={self.id}, action={self.name})"
@@ -55,6 +72,8 @@ class User(Base):
     chat_id: Mapped[str] = mapped_column(
         String(30)
     )  # todo change in the code from 'chat'
+    created_at: Mapped[timestamp]
+    updated_at: Mapped[timestamp]
 
 
 class Category(Base):
@@ -64,6 +83,8 @@ class Category(Base):
     name: Mapped[str] = mapped_column(
         String(30)
     )  # todo change in the code from 'category'
+    created_at: Mapped[timestamp]
+    updated_at: Mapped[timestamp]
 
 
 class Subcategory(Base):
@@ -74,3 +95,5 @@ class Subcategory(Base):
     name: Mapped[str] = mapped_column(
         String(30)
     )  # todo change in the code from 'subcategory'
+    created_at: Mapped[timestamp]
+    updated_at: Mapped[timestamp]
