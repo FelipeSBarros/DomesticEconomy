@@ -17,7 +17,7 @@ from sqlalchemy.orm import (
 load_dotenv()
 DB_NAME = os.getenv("DB_NAME")
 
-engine = create_engine(f"sqlite:///{DB_NAME}", echo=True)
+engine = create_engine(os.getenv("DB_URL"), echo=True)
 
 Session = sessionmaker(bind=engine)
 
