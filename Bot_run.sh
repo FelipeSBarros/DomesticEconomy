@@ -2,8 +2,9 @@
 
 # This script keeps the bot running "forever":
 # if it dies the script will relaunch it
+source .venv/bin/activate  # todo alter to poetry
 RC=1
 while [ $RC -ne 0 ]; do
-   python3 economybot.py
+   python economybot.py
    RC=$?
 done
