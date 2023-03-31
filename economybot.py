@@ -62,11 +62,11 @@ def get_last_chat_id_and_text(updates):
     return (text, chat_id)
 
 
-def send_message(text, chat_id, parse_mode="markdown", reply_markup=None):
+def send_message(text, chat_id, reply_markup=None, parse_mode="markdown"):
     text = urllib.parse.quote_plus(text)
     url = URL + f"sendMessage?text={text}&chat_id={chat_id}&parse_mode={parse_mode}"
     if reply_markup:
-        url += f"reply_markup={reply_markup}"
+        url += f"&reply_markup={reply_markup}"
     get_url(url)
 
 
@@ -249,8 +249,12 @@ def handle_updates(updates):
                     msg = f"Value *{svalue}* added on database!"
                     send_message(msg, chat)
 
-        except KeyError:
-            pass
+            if text.startswith("test"):
+                key_board = build_keyboard(['ok', 'nok'])
+                send_message("Select an item to delete", chat, reply_markup=key_board)
+
+        except Exception as e:  # todo meelhorar erros
+            send_message(f"ERROR: {e}", chat)
 
 
 def main():
