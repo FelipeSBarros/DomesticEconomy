@@ -17,6 +17,7 @@ import requests
 
 # from API import API # bot API.py
 from dotenv import load_dotenv
+from models import Session, Action, Category, User, General
 
 from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
 
@@ -26,6 +27,14 @@ URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 NL = "\n"
 db = DBHelper()
 
+
+class DataManagement:
+    def __init__(self):
+        general_model = None,
+        ready = "NO"
+
+    def save(self):
+        pass
 
 def get_url(url):  # Function to get URL and set encode
     response = requests.get(url)
@@ -89,6 +98,10 @@ def build_keyboard(items):
 
 
 def handle_updates(updates):
+    session = Session()
+    general = General
+    categories = session.query(Category).all()
+    categories = [category for category in categories]
     for update in updates["result"]:
         try:
             if "from" in updates["result"][0]["message"].keys():
@@ -104,23 +117,36 @@ def handle_updates(updates):
                     f"Welcome to Dosmestic Economy Bot! Your personal assistent, {user}!!",
                     chat,
                 )
-                users = db.get_users()
+                users = session.query(User)
+                users = [user for user in users]
                 if user not in users:
-                    db.insertuser(user, chat)
+                    new_user = User(name=user, chat_id=chat)
+                    session.add(new_user)
+                    session.commit()
                 send_message(
                     "Before we can start, a few tips ans tricks: \n *Use:* \n `/expenses [value] [category] [subcategory]` \n to insert a expenses, WHERE *value* is a number; \n *Exemple:* \n `/expenses 100 alimentacao restaurante`",
                     chat,
                 )  # todo export to msg file
-                send_action(chat)
+                # send_action(chat)
                 send_message(
                     "To know the *category* you can use, just type `/category` and I send you the options you have. \n The same for *subcategory* (just write `/subcategory`)",
                     chat,
                 )  # todo export to msg file
-                send_action(chat)
+                # send_action(chat)
                 send_message(
                     "Also, you can save your incomes! Just type `/income [value]` \n `/income 1000`",
                     chat,
                 )  # todo export to msg file
+                actions = session.query(Action).all()
+                actions = [action.name for action in actions]
+                keyboard = build_keyboard(actions)
+                send_message(
+                    "what do you need to register?", chat, reply_markup=keyboard
+                )
+
+            elif text == "expenses":
+                action = session.query(Action).filter_by(name=text).one()
+                general = general(action=action)
 
             if text.startswith("/expenses"):
                 if len(text.split(" ")) < 4:
@@ -136,6 +162,8 @@ def handle_updates(updates):
                     send_message(
                         f"Ok, I'm done!\n {value} inserted as expenses", chat
                     )  # todo export to msg file
+
+           # if text.startswith("expenses"):
 
             if text.startswith("/income"):
                 action, value = text.split(" ")
@@ -250,7 +278,7 @@ def handle_updates(updates):
                     send_message(msg, chat)
 
             if text.startswith("test"):
-                key_board = build_keyboard(['ok', 'nok'])
+                key_board = build_keyboard(["ok", "nok"])
                 send_message("Select an item to delete", chat, reply_markup=key_board)
 
         except Exception as e:  # todo meelhorar erros
