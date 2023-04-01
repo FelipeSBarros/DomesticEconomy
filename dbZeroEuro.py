@@ -18,48 +18,69 @@ from email.utils import formatdate
 import matplotlib.pyplot as plt
 import pandas as pd
 from dotenv import load_dotenv
+from models import Session, Action, Category, Subcategory, User, General
 
 load_dotenv()
 EMAIL = os.getenv("email")
 PASSWORD = os.getenv("password")
-DB_NAME = os.getenv("DB_NAME")
+
 
 
 class DBHelper:
-    def __init__(self, dbname=DB_NAME):
-        self.dbname = dbname
-        self.conn = sqlite3.connect(dbname)
+    def __init__(self, session=Session, model=General):
+        self.session = session
+        self.model = General
+        self.status = None
 
-    def insertuser(self, user, chat):
-        tblstmt = "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, user text, chat integer)"
-        # itemidx = "CREATE INDEX IF NOT EXISTS itemIndex ON items (description ASC)"
-        # ownidx = "CREATE INDEX IF NOT EXISTS ownIndex ON items (owner ASC)"
-        self.conn.execute(tblstmt)
-        # self.conn.execute(itemidx)
-        # self.conn.execute(ownidx)
-        self.conn.execute("insert into users(user, chat) values (?, ?);", (user, chat))
-        self.conn.commit()
-
-    def get_action(self):
-        stmt = "SELECT distinct(action) FROM action"
-        return [x[0] for x in self.conn.execute(stmt)]
+    def update_status(self, text):
+        self.status = text
 
     def get_users(self):
-        stmt = "SELECT distinct(user) FROM users"
-        return [x[0] for x in self.conn.execute(stmt)]
+        with self.session() as session:
+            users = session.query(User)
+        return [user.name for user in users]
 
-    def get_category(self):
-        stmt = "SELECT distinct(category) FROM category"
-        return [x[0] for x in self.conn.execute(stmt)]
+    def filter_user(self, text):
+        with self.session() as session:
+            user = session.query(User).filter_by(name=text).first()
+        return user if user else False
 
-    def get_subcategory(self, cat=None):
-        if cat:
-            stmt = "SELECT distinct(subcategory) FROM subcategory WHERE catid = (SELECT id from category where category = (?)) OR category = (?);"
-            args = (cat, "")
-            return [x[0] for x in self.conn.execute(stmt, args)]
-        else:
-            stmt = "SELECT distinct(subcategory) FROM subcategory"
-            return [x[0] for x in self.conn.execute(stmt)]
+    def insertuser(self, user, chat):
+        with self.session() as session:
+            new_user = User(name=user, chat_id=chat)
+            session.add(new_user)
+            session.commit()
+
+    def update_model_user(self, user):
+        self.model.user = user
+
+    def get_actions(self):
+        with self.session() as session:
+            actions = session.query(Action).all()
+        return [action.name for action in actions]
+
+    def filter_action(self, text):
+        with self.session() as session:
+            action = session.query(Action).filter_by(name=text).one()
+        return action
+
+    def update_model_action(self, action):
+        self.model.action = action
+
+    def get_categories(self):
+        with Session() as session:
+            categories = session.query(Category).all()
+        return [category.name for category in categories]
+
+    def update_model_category(self, category):
+        self.model.category = category
+
+    def get_subcategories(self, cat=None):
+        with Session() as session:
+            category = session.query(Category).filter_by(name=self.model.category).one()
+            print(category)
+            subcategories = session.query(Subcategory).filter_by(category_id=category.id)
+        return [subcategory.name for subcategory in subcategories]
 
     def insertExpenses(self, owner, category, subcategory, value, date):
         stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ((SELECT id from action where action = 'gastos'), (select id from users where user = (?)), (select id from category where category = (?)), (select id from subcategory where subcategory = (?)), (?), (?));"

@@ -20,21 +20,14 @@ from dotenv import load_dotenv
 from models import Session, Action, Category, User, General
 
 from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
+from messages import WELCOME_MSG
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 URL = f"https://api.telegram.org/bot{BOT_TOKEN}/"
 NL = "\n"
-db = DBHelper()
+db = DBHelper(Session)
 
-
-class DataManagement:
-    def __init__(self):
-        general_model = None,
-        ready = "NO"
-
-    def save(self):
-        pass
 
 def get_url(url):  # Function to get URL and set encode
     response = requests.get(url)
@@ -98,10 +91,7 @@ def build_keyboard(items):
 
 
 def handle_updates(updates):
-    session = Session()
-    general = General
-    categories = session.query(Category).all()
-    categories = [category for category in categories]
+    categories = db.get_categories()
     for update in updates["result"]:
         try:
             if "from" in updates["result"][0]["message"].keys():
@@ -109,6 +99,7 @@ def handle_updates(updates):
             else:
                 user = update["message"]["chat"]["first_name"]
 
+            registered_user = db.filter_user(user)
             text = update["message"]["text"]
             chat = update["message"]["chat"]["id"]
 
@@ -117,38 +108,35 @@ def handle_updates(updates):
                     f"Welcome to Dosmestic Economy Bot! Your personal assistent, {user}!!",
                     chat,
                 )
-                users = session.query(User)
-                users = [user for user in users]
-                if user not in users:
-                    new_user = User(name=user, chat_id=chat)
-                    session.add(new_user)
-                    session.commit()
-                send_message(
-                    "Before we can start, a few tips ans tricks: \n *Use:* \n `/expenses [value] [category] [subcategory]` \n to insert a expenses, WHERE *value* is a number; \n *Exemple:* \n `/expenses 100 alimentacao restaurante`",
-                    chat,
-                )  # todo export to msg file
-                # send_action(chat)
-                send_message(
-                    "To know the *category* you can use, just type `/category` and I send you the options you have. \n The same for *subcategory* (just write `/subcategory`)",
-                    chat,
-                )  # todo export to msg file
-                # send_action(chat)
-                send_message(
-                    "Also, you can save your incomes! Just type `/income [value]` \n `/income 1000`",
-                    chat,
-                )  # todo export to msg file
-                actions = session.query(Action).all()
-                actions = [action.name for action in actions]
+                if not registered_user:
+                    db.insertuser(user, chat)
+                db.update_model_user(user)
+
+                for message in WELCOME_MSG:
+                    send_message(message, chat)
+                actions = db.get_actions()
                 keyboard = build_keyboard(actions)
                 send_message(
                     "what do you need to register?", chat, reply_markup=keyboard
                 )
 
             elif text == "expenses":
-                action = session.query(Action).filter_by(name=text).one()
-                general = general(action=action)
+                action = db.filter_action(text)
+                db.update_model_action(action)
+                categories = db.get_categories()
+                keyboard = build_keyboard(categories)
+                send_message("In which category?", chat, reply_markup=keyboard)
+                db.update_status("CATEGORY")
 
-            if text.startswith("/expenses"):
+            elif db.status == "CATEGORY" and text in categories:
+                db.update_model_category(text)
+                subcategories = db.get_subcategories()
+                keyboard = build_keyboard(subcategories)
+                send_message("In which subcategory?", chat, reply_markup=keyboard)
+                db.update_status("SUBCATEGORY")
+
+
+            elif text.startswith("bla"):
                 if len(text.split(" ")) < 4:
                     send_message(
                         "Sorry, I couldnt save your expenses. Something is missing",
@@ -163,7 +151,7 @@ def handle_updates(updates):
                         f"Ok, I'm done!\n {value} inserted as expenses", chat
                     )  # todo export to msg file
 
-           # if text.startswith("expenses"):
+            # if text.startswith("expenses"):
 
             if text.startswith("/income"):
                 action, value = text.split(" ")
