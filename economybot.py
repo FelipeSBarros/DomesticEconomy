@@ -6,7 +6,6 @@ Created on Fri Jan 12 04:21:29 2018
 https://github.com/FelipeSBarros
 """
 
-import datetime as date  # to manage date and time
 import json
 import os
 import time
@@ -17,10 +16,10 @@ import requests
 
 # from API import API # bot API.py
 from dotenv import load_dotenv
-from models import Session, Action, Category, User, General
 
-from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
+from dbhelper import DBHelper  # import class and method created to work with sqlite3
 from messages import WELCOME_MSG
+from models import Session
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -92,6 +91,7 @@ def build_keyboard(items):
 
 def handle_updates(updates):
     categories = db.get_categories()
+    actions = db.get_actions()
     for update in updates["result"]:
         try:
             if "from" in updates["result"][0]["message"].keys():
@@ -110,166 +110,165 @@ def handle_updates(updates):
                 )
                 if not registered_user:
                     db.insertuser(user, chat)
-                db.update_model_user(user)
 
                 for message in WELCOME_MSG:
                     send_message(message, chat)
-                actions = db.get_actions()
                 keyboard = build_keyboard(actions)
                 send_message(
                     "what do you need to register?", chat, reply_markup=keyboard
                 )
 
-            elif text == "expenses":
+            elif text == "expenses" and not db.status:
+                user = db.filter_user(user)
+                db.update_model_user(user.id)
                 action = db.filter_action(text)
-                db.update_model_action(action)
+                db.update_model_action(action.id)
                 categories = db.get_categories()
                 keyboard = build_keyboard(categories)
                 send_message("In which category?", chat, reply_markup=keyboard)
                 db.update_status("CATEGORY")
 
-            elif db.status == "CATEGORY" and text in categories:
-                db.update_model_category(text)
+            elif db.status == "CATEGORY" and db.model.action:
+                category = db.filter_category(text)
+                db.update_model_category(category.id)
                 subcategories = db.get_subcategories()
                 keyboard = build_keyboard(subcategories)
                 send_message("In which subcategory?", chat, reply_markup=keyboard)
                 db.update_status("SUBCATEGORY")
 
-
-            elif text.startswith("bla"):
-                if len(text.split(" ")) < 4:
-                    send_message(
-                        "Sorry, I couldnt save your expenses. Something is missing",
-                        chat,
-                    )  # todo export to msg file
-                else:
-                    action, value, category, subcategory = text.split(" ")
-                    db.insertExpenses(
-                        user, category, subcategory, float(value), date.date.today()
-                    )
-                    send_message(
-                        f"Ok, I'm done!\n {value} inserted as expenses", chat
-                    )  # todo export to msg file
-
-            # if text.startswith("expenses"):
-
-            if text.startswith("/income"):
-                action, value = text.split(" ")
-                send_message("Saving income!!", chat)
-                db.insertIncome(user, value, date.date.today())
-                send_message(f"Well done!\n {value} inserted as income!", chat)
-
-            if text == "/category":
-                cats = db.get_category()
+            elif db.status == "SUBCATEGORY" and db.model.category:
+                subcategory = db.filter_subcategory(text)
+                db.update_model_subcategory(subcategory.id)
+                # keyboard = build_keyboard(subcategories)
                 send_message(
-                    "Your options for **category** are:\n\n{}".format("\n".join(cats)),
-                    chat,
-                )  # todo usar f-string
+                    "How much?", chat
+                )  # todo add buttons # , reply_markup=keyboard  #https://stackoverflow.com/questions/63415226/number-keyboard-for-python-telegram-bot
+                db.update_status("VALUE")
 
-            if text.startswith("/subcategory"):
-                if len(text.split(" ")) == 1:
-                    subcats = db.get_subcategory()
-                    send_message(
-                        "*Subcategory* options:\n\n{}".format("\n".join(subcats)), chat
-                    )  # todo usar f-string
-                if len(text.split(" ")) == 2:
-                    command, cat = text.split(" ")
-                    subcats = db.get_subcategory(cat)
-                    send_message(
-                        "*Subcategory* options for the category *{}*, are:\n\n{}".format(
-                            cat, "\n".join(subcats)
-                        ),
-                        chat,
-                    )  # todo usar f-string
+            elif db.status == "VALUE" and db.model.subcategory:
+                val = float(text)
+                db.model.value = val
+                db.save_expenses()
+                keyboard = build_keyboard(actions)
+                send_message(
+                    "what do you need to register?", chat, reply_markup=keyboard
+                )
+                db.clean_model()
 
-            if text.startswith("/summary"):
-                if len(text.split(" ")) >= 2:
-                    param = text.split(" ")[1]
-                    if len(text.split(" ")) >= 3:
-                        month = text.split(" ")[2]
-                        month = month.zfill(2)
-                        year = date.date.today().year
-                        if len(text.split(" ")) == 4:
-                            year = text.split(" ")[3]
-                    else:
-                        month = str(date.date.today().month).zfill(2)
-                        year = date.date.today().year
-                    summary = db.get_summary(param, month, year)
-                    send_message(
-                        f"*Summary by {param} for moth {month} and year {year}*:", chat
-                    )
-                    send_message("{summary}", chat)
-                else:
-                    send_message(
-                        "*Wrong parameter sent!*\n you ust send:\n /summary [param] [month] [year]\n where [month] and [year] are optional",
-                        chat,
-                    )  # todo export to msg file
+            # if text.startswith("income"):  # todo implementar
+            #     action, value = text.split(" ")
+            #     send_message("Saving income!!", chat)
+            #     db.insertIncome(user, value, date.date.today())
+            #     send_message(f"Well done!\n {value} inserted as income!", chat)
+            #
+            # if text == "/category":
+            #     cats = db.get_category()
+            #     send_message(
+            #         "Your options for **category** are:\n\n{}".format("\n".join(cats)),
+            #         chat,
+            #     )  # todo usar f-string
+            #
+            # if text.startswith("/subcategory"):
+            #     if len(text.split(" ")) == 1:
+            #         subcats = db.get_subcategory()
+            #         send_message(
+            #             "*Subcategory* options:\n\n{}".format("\n".join(subcats)), chat
+            #         )  # todo usar f-string
+            #     if len(text.split(" ")) == 2:
+            #         command, cat = text.split(" ")
+            #         subcats = db.get_subcategory(cat)
+            #         send_message(
+            #             "*Subcategory* options for the category *{}*, are:\n\n{}".format(
+            #                 cat, "\n".join(subcats)
+            #             ),
+            #             chat,
+            #         )  # todo usar f-string
+            #
+            # if text.startswith("/summary"):
+            #     if len(text.split(" ")) >= 2:
+            #         param = text.split(" ")[1]
+            #         if len(text.split(" ")) >= 3:
+            #             month = text.split(" ")[2]
+            #             month = month.zfill(2)
+            #             year = date.date.today().year
+            #             if len(text.split(" ")) == 4:
+            #                 year = text.split(" ")[3]
+            #         else:
+            #             month = str(date.date.today().month).zfill(2)
+            #             year = date.date.today().year
+            #         summary = db.get_summary(param, month, year)
+            #         send_message(
+            #             f"*Summary by {param} for moth {month} and year {year}*:", chat
+            #         )
+            #         send_message("{summary}", chat)
+            #     else:
+            #         send_message(
+            #             "*Wrong parameter sent!*\n you ust send:\n /summary [param] [month] [year]\n where [month] and [year] are optional",
+            #             chat,
+            #         )  # todo export to msg file
+            #
+            # if text.startswith("/plot"):
+            #     if len(text.split(" ")) >= 2:
+            #         param = text.split(" ")[1]
+            #         if len(text.split(" ")) >= 3:
+            #             month = text.split(" ")[2].zfill(2)
+            #             year = date.date.today().year
+            #             if len(text.split(" ")) == 4:
+            #                 year = text.split(" ")[3]
+            #         else:
+            #             month = str(date.date.today().month).zfill(2)
+            #             year = date.date.today().year
+            #         path = db.get_plots(param, month, year)
+            #         if isinstance(path, list):
+            #             for plot in path:
+            #                 send_photo(chat_id=chat, photo=plot)
+            #         elif path.startswith("Not"):
+            #             send_message(path, chat)
+            #         else:
+            #             # print(path)
+            #             send_photo(chat_id=chat, photo=path)
+            #     else:
+            #         send_message(
+            #             "*Wrong parameter sent!*\n you ust send:\n /plot [param] [month] [year]",
+            #             chat,
+            #         )  # todo export to msg file
+            #
+            # if text.startswith("/backup"):
+            #     send_message("Building databse backup", chat)
+            #     db.sqlite3_backup()
+            #     if len(text.split(" ")) == 2:
+            #         NO_OF_DAYS = int(text.split(" ")[1])
+            #         send_message(
+            #             f"Removing backups with {NO_OF_DAYS} days or more", chat
+            #         )
+            #         db.clean_data(backup_dir="./backup", NO_OF_DAYS=NO_OF_DAYS)
+            #     send_message("All done!", chat)
+            #
+            # if text.startswith("/sql"):
+            #     sql = text[5:]
+            #     msg = db.sql(sql)
+            #     send_message(f"{msg}", chat)
+            #
+            # if text.startswith("/add"):
+            #     if len(text.split(" ")) == 2:
+            #         cats = db.get_category()
+            #         value = text.split(" ")[1]
+            #         if value not in cats:
+            #             sql = f"INSERT INTO category(category) VALUES ('{value}')"
+            #             msg = db.sql(sql)
+            #             send_message("Value *{value}* added on databse", chat)
+            #         else:
+            #             msg = f"Not processed: Category *{value}* already exists;"
+            #             send_message(msg, chat)
+            #     if len(text.split(" ")) == 3:
+            #         value, svalue = text.split(" ")[1:]
+            #         sql = f"INSERT INTO subcategory(catid, subcategory, category) VALUES ((select id from category where category = '{value}'), '{svalue}', '{value}');"
+            #         msg = db.sql(sql)  # todo remover
+            #         msg = f"Value *{svalue}* added on database!"
+            #         send_message(msg, chat)
+            #
 
-            if text.startswith("/plot"):
-                if len(text.split(" ")) >= 2:
-                    param = text.split(" ")[1]
-                    if len(text.split(" ")) >= 3:
-                        month = text.split(" ")[2].zfill(2)
-                        year = date.date.today().year
-                        if len(text.split(" ")) == 4:
-                            year = text.split(" ")[3]
-                    else:
-                        month = str(date.date.today().month).zfill(2)
-                        year = date.date.today().year
-                    path = db.get_plots(param, month, year)
-                    if isinstance(path, list):
-                        for plot in path:
-                            send_photo(chat_id=chat, photo=plot)
-                    elif path.startswith("Not"):
-                        send_message(path, chat)
-                    else:
-                        # print(path)
-                        send_photo(chat_id=chat, photo=path)
-                else:
-                    send_message(
-                        "*Wrong parameter sent!*\n you ust send:\n /plot [param] [month] [year]",
-                        chat,
-                    )  # todo export to msg file
-
-            if text.startswith("/backup"):
-                send_message("Building databse backup", chat)
-                db.sqlite3_backup()
-                if len(text.split(" ")) == 2:
-                    NO_OF_DAYS = int(text.split(" ")[1])
-                    send_message(
-                        f"Removing backups with {NO_OF_DAYS} days or more", chat
-                    )
-                    db.clean_data(backup_dir="./backup", NO_OF_DAYS=NO_OF_DAYS)
-                send_message("All done!", chat)
-
-            if text.startswith("/sql"):
-                sql = text[5:]
-                msg = db.sql(sql)
-                send_message(f"{msg}", chat)
-
-            if text.startswith("/add"):
-                if len(text.split(" ")) == 2:
-                    cats = db.get_category()
-                    value = text.split(" ")[1]
-                    if value not in cats:
-                        sql = f"INSERT INTO category(category) VALUES ('{value}')"
-                        msg = db.sql(sql)
-                        send_message("Value *{value}* added on databse", chat)
-                    else:
-                        msg = f"Not processed: Category *{value}* already exists;"
-                        send_message(msg, chat)
-                if len(text.split(" ")) == 3:
-                    value, svalue = text.split(" ")[1:]
-                    sql = f"INSERT INTO subcategory(catid, subcategory, category) VALUES ((select id from category where category = '{value}'), '{svalue}', '{value}');"
-                    msg = db.sql(sql)  # todo remover
-                    msg = f"Value *{svalue}* added on database!"
-                    send_message(msg, chat)
-
-            if text.startswith("test"):
-                key_board = build_keyboard(["ok", "nok"])
-                send_message("Select an item to delete", chat, reply_markup=key_board)
-
-        except Exception as e:  # todo meelhorar erros
+        except Exception as e:
             send_message(f"ERROR: {e}", chat)
 
 

@@ -25,11 +25,10 @@ EMAIL = os.getenv("email")
 PASSWORD = os.getenv("password")
 
 
-
 class DBHelper:
     def __init__(self, session=Session, model=General):
         self.session = session
-        self.model = General
+        self.model = General()
         self.status = None
 
     def update_status(self, text):
@@ -43,7 +42,7 @@ class DBHelper:
     def filter_user(self, text):
         with self.session() as session:
             user = session.query(User).filter_by(name=text).first()
-        return user if user else False
+        return user
 
     def insertuser(self, user, chat):
         with self.session() as session:
@@ -72,15 +71,44 @@ class DBHelper:
             categories = session.query(Category).all()
         return [category.name for category in categories]
 
+    def filter_category(self, text):
+        with self.session() as session:
+            category = session.query(Category).filter_by(name=text).one()
+        return category
+
     def update_model_category(self, category):
         self.model.category = category
 
-    def get_subcategories(self, cat=None):
+    def get_subcategories(self):
         with Session() as session:
-            category = session.query(Category).filter_by(name=self.model.category).one()
-            print(category)
-            subcategories = session.query(Subcategory).filter_by(category_id=category.id)
+            subcategories = session.query(Subcategory).filter_by(
+                category_id=self.model.category
+            )
         return [subcategory.name for subcategory in subcategories]
+
+    def filter_subcategory(self, text):
+        with self.session() as session:
+            subcategory = (
+                session.query(Subcategory)
+                .filter_by(category_id=self.model.category, name=text)
+                .one()
+            )
+        return subcategory
+
+    def update_model_subcategory(self, subcategory):
+        self.model.subcategory = subcategory
+
+    def update_model_value(self, value):
+        self.model.value = value
+
+    def save_expenses(self):
+        with Session() as session:
+            session.add(self.model)
+            session.commit()
+
+    def clean_model(self):
+        self.model = General()
+        self.status = None
 
     def insertExpenses(self, owner, category, subcategory, value, date):
         stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ((SELECT id from action where action = 'gastos'), (select id from users where user = (?)), (select id from category where category = (?)), (select id from subcategory where subcategory = (?)), (?), (?));"

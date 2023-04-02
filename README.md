@@ -46,7 +46,7 @@ pip install requests
   
 * **setup.py**: will create the database, tables and insert default values. 
 :warning: Take a look on it if you plan to adequate both category and subcategories to your reality;  
-* **dbZeroEuro.py**: has all the functions related to the database: insert & retrieve data;  
+* **dbhelper.py**: has all the functions related to the database: insert & retrieve data;  
 * **economybot.py**: is the bot it self. Mannage the text sent to bot and call the according functions;  
 * **Bot_run.sh**: a bash script to keep bot running even after it breaks;
 * **.env**: You must create this file where you should put the **bot key**, **user-email** & **email password**;  

@@ -15,7 +15,7 @@ import urllib3
 from dotenv import load_dotenv
 from flask import Flask, request
 
-from dbZeroEuro import DBHelper  # import class and method created to work with sqlite3
+from dbhelper import DBHelper  # import class and method created to work with sqlite3
 
 load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
