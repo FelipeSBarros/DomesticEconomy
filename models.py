@@ -35,21 +35,23 @@ class General(Base):
     __tablename__ = "general"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    action: Mapped[int] = mapped_column(ForeignKey("action.id"))
+    action_id: Mapped[int] = mapped_column(ForeignKey("action.id"))
     # action: Mapped[
     #     "Action"
     # ] = (
     #     relationship()
     # )  # back_populates="Action", cascade="all, delete-orphan")  # todo not sure if should use
-    user: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    category: Mapped[int] = mapped_column(ForeignKey("category.id"))
-    subcategory: Mapped[int] = mapped_column(ForeignKey("subcategory.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
+    category_id: Mapped[int] = mapped_column(ForeignKey("category.id"), nullable=True)
+    subcategory_id: Mapped[int] = mapped_column(
+        ForeignKey("subcategory.id"), nullable=True
+    )
     value: Mapped[float] = mapped_column(Float)
     created_at: Mapped[timestamp]
     updated_at: Mapped[timestamp]
 
-    # def __repr__(self):
-    #     return f"General(id={self.id}, action_id={self.action.name}, value={self.value}"
+    def __repr__(self):
+        return f"General(action_id={self.action.name}, value={self.value}"
 
 
 class Action(Base):

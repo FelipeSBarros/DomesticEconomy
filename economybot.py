@@ -1,23 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 12 04:21:29 2018
-
-@author: Felipe Sodre Mendes Barros
-https://github.com/FelipeSBarros
-"""
-
 import json
 import os
 import time
-import urllib  # to handle with special characters
+import urllib
 from os.path import dirname, relpath
 
 import requests
 
-# from API import API # bot API.py
 from dotenv import load_dotenv
 
-from dbhelper import DBHelper  # import class and method created to work with sqlite3
+from dbhelper import DBHelper
 from messages import WELCOME_MSG
 from models import Session
 
@@ -91,7 +82,9 @@ def build_keyboard(items):
 
 def handle_updates(updates):
     categories = db.get_categories()
+    categories.append("CANCEL")
     actions = db.get_actions()
+    actions.append("CANCEL")
     for update in updates["result"]:
         try:
             if "from" in updates["result"][0]["message"].keys():
@@ -111,48 +104,46 @@ def handle_updates(updates):
                 if not registered_user:
                     db.insertuser(user, chat)
 
-                for message in WELCOME_MSG:
-                    send_message(message, chat)
+                db.clean_model()
                 keyboard = build_keyboard(actions)
-                send_message(
-                    "what do you need to register?", chat, reply_markup=keyboard
-                )
+                send_message(WELCOME_MSG, chat, reply_markup=keyboard)
+
+            elif text == "CANCEL":
+                db.clean_model()
+                keyboard = build_keyboard(actions)
+                send_message(WELCOME_MSG, chat, reply_markup=keyboard)
 
             elif text == "expenses" and not db.status:
                 user = db.filter_user(user)
                 db.update_model_user(user.id)
                 action = db.filter_action(text)
                 db.update_model_action(action.id)
-                categories = db.get_categories()
                 keyboard = build_keyboard(categories)
                 send_message("In which category?", chat, reply_markup=keyboard)
                 db.update_status("CATEGORY")
 
-            elif db.status == "CATEGORY" and db.model.action:
+            elif db.status == "CATEGORY" and db.model.action_id:
                 category = db.filter_category(text)
                 db.update_model_category(category.id)
                 subcategories = db.get_subcategories()
+                subcategories.append("CANCEL")
                 keyboard = build_keyboard(subcategories)
                 send_message("In which subcategory?", chat, reply_markup=keyboard)
                 db.update_status("SUBCATEGORY")
 
-            elif db.status == "SUBCATEGORY" and db.model.category:
+            elif db.status == "SUBCATEGORY" and db.model.category_id:
                 subcategory = db.filter_subcategory(text)
                 db.update_model_subcategory(subcategory.id)
-                # keyboard = build_keyboard(subcategories)
-                send_message(
-                    "How much?", chat
-                )  # todo add buttons # , reply_markup=keyboard  #https://stackoverflow.com/questions/63415226/number-keyboard-for-python-telegram-bot
+                keyboard = build_keyboard(["CANCEL"])
+                send_message("How much?", chat, reply_markup=keyboard)
                 db.update_status("VALUE")
 
-            elif db.status == "VALUE" and db.model.subcategory:
+            elif db.status == "VALUE" and db.model.subcategory_id:
                 val = float(text)
                 db.model.value = val
                 db.save_expenses()
                 keyboard = build_keyboard(actions)
-                send_message(
-                    "what do you need to register?", chat, reply_markup=keyboard
-                )
+                send_message(WELCOME_MSG, chat, reply_markup=keyboard)
                 db.clean_model()
 
             # if text.startswith("income"):  # todo implementar

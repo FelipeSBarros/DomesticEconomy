@@ -50,8 +50,8 @@ class DBHelper:
             session.add(new_user)
             session.commit()
 
-    def update_model_user(self, user):
-        self.model.user = user
+    def update_model_user(self, user_id):
+        self.model.user_id = user_id
 
     def get_actions(self):
         with self.session() as session:
@@ -63,8 +63,8 @@ class DBHelper:
             action = session.query(Action).filter_by(name=text).one()
         return action
 
-    def update_model_action(self, action):
-        self.model.action = action
+    def update_model_action(self, action_id):
+        self.model.action_id = action_id
 
     def get_categories(self):
         with Session() as session:
@@ -76,13 +76,13 @@ class DBHelper:
             category = session.query(Category).filter_by(name=text).one()
         return category
 
-    def update_model_category(self, category):
-        self.model.category = category
+    def update_model_category(self, category_id):
+        self.model.category_id = category_id
 
     def get_subcategories(self):
         with Session() as session:
             subcategories = session.query(Subcategory).filter_by(
-                category_id=self.model.category
+                category_id=self.model.category_id
             )
         return [subcategory.name for subcategory in subcategories]
 
@@ -90,13 +90,13 @@ class DBHelper:
         with self.session() as session:
             subcategory = (
                 session.query(Subcategory)
-                .filter_by(category_id=self.model.category, name=text)
+                .filter_by(category_id=self.model.category_id, name=text)
                 .one()
             )
         return subcategory
 
-    def update_model_subcategory(self, subcategory):
-        self.model.subcategory = subcategory
+    def update_model_subcategory(self, subcategory_id):
+        self.model.subcategory_id = subcategory_id
 
     def update_model_value(self, value):
         self.model.value = value
@@ -109,12 +109,6 @@ class DBHelper:
     def clean_model(self):
         self.model = General()
         self.status = None
-
-    def insertExpenses(self, owner, category, subcategory, value, date):
-        stmt = "INSERT INTO general(action, user, category, subcategory, value, date) VALUES ((SELECT id from action where action = 'gastos'), (select id from users where user = (?)), (select id from category where category = (?)), (select id from subcategory where subcategory = (?)), (?), (?));"
-        args = (owner, category, subcategory, value, date)
-        self.conn.execute(stmt, args)
-        self.conn.commit()
 
     def insertIncome(self, owner, value, date):
         stmt = "INSERT INTO general(action, user, value, date) VALUES ((SELECT id from action where action = 'receita'), (select id from users where user = (?)), (?), (?));"
