@@ -23,7 +23,7 @@ Session = sessionmaker(bind=engine)
 
 timestamp = Annotated[
     datetime,
-    mapped_column(nullable=False, server_default=func.CURRENT_TIMESTAMP()),
+    mapped_column(nullable=False, server_default=func.CURRENT_TIMESTAMP()),  # todo confirmar on update
 ]
 
 

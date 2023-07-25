@@ -21,9 +21,9 @@ It can also be used in different contexts;
 ## Few things I'm planning to improve later:
 - [X] Refactor using [dotenv](https://pypi.org/project/python-dotenv/)
 - [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
-- [ ] Refactor Data base management:
-  - [SQLAlchemy](https://www.sqlalchemy.org/);
-  - [Alembique](https://alembic.sqlalchemy.org/en/latest/);
+- [X] Refactor Data base management:
+  - [X] [SQLAlchemy](https://www.sqlalchemy.org/);
+  - [X] [Alembique](https://alembic.sqlalchemy.org/en/latest/);
   - initials data;
 - [ ] Add test;
 - [ ] Add Github Actions;

@@ -1,10 +1,13 @@
 #!/bin/sh
 
-# This script keeps the bot running "forever":
-# if it dies the script will relaunch it
-source .venv/bin/activate  # todo alter to poetry
-RC=1
-while [ $RC -ne 0 ]; do
-   python economybot.py
-   RC=$?
-done
+source /home/felipe/.cache/pypoetry/virtualenvs/domesticeconomy-XstqN5mN-py3.11/bin/activate  # todo alter to poetry
+if [ -n "domesticeconomy-py3.11" ]; then
+  echo "Ambiente virtual ativado com sucesso."
+  RC=1
+  while [ $RC -ne 0 ]; do
+     python economybot.py
+     RC=$?
+  done
+else
+  echo "Falha ao ativar o ambiente virtual."
+fi
