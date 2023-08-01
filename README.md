@@ -2,7 +2,7 @@
 
 # Zero Euro Bot: Chat bot for domestic cash flow control  
 
-This project builds a chatbot to easily save domestic economy expenses and incomes. 
+This project builds a chatbot to easily save domestic economy expenses and incomes on Telegram. 
 It can also be used in different contexts;
 
 ## Domestic Economy chatbot functionalities:  
@@ -23,23 +23,43 @@ It can also be used in different contexts;
 - [ ] Refactor using [python-telegram-bot](https://pypi.org/project/python-telegram-bot/);
 - [X] Refactor Data base management:
   - [X] [SQLAlchemy](https://www.sqlalchemy.org/);
-  - [X] [Alembique](https://alembic.sqlalchemy.org/en/latest/);
+  - [ ] [Alembique](https://alembic.sqlalchemy.org/en/latest/) - It is already setup but showed some errors. Not using for now;
   - initials data;
 - [ ] Add test;
 - [ ] Add Github Actions;
 - [ ] Improve UX/UI by using buttons menu;  
 - [ ] Implement commando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
 
-### Setting up a virtualenv
-```
-sudo apt-get install python3-pip python3-dev python-virtualenv python3-pandas python3-matplotlib # for Python 3.n
-virtualenv ZeroEuroBot -p python3 
-source ZeroEuroBot/bin/activate
-easy_install -U pip
-pip install requests
+## Setting up
+
+### virtualenv
+```python
+python -m venv .venv
+source .venv/bin/activate
+pip install upgrade --pip
+pip install requests  # todo confirmar necessidade
 ```
 
-* run `python setup.py´
+### Data base
+
+### creating database
+
+```python
+import os
+from models import Base
+from dotenv import load_dotenv
+from sqlalchemy import create_engine
+
+
+load_dotenv()
+DB_NAME = os.getenv("DB_NAME")
+
+engine = create_engine(os.getenv("DB_URL"), echo=True)
+
+Base.metadata.create_all(engine)
+```
+
+* run [`python setup.py´](setup.py);
 * `sh Bot_run.sh`
 
 ### About files and codes:  
