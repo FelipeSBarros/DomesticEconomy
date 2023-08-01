@@ -31,18 +31,18 @@ It can also be used in different contexts;
 - [ ] Implement commando by voice by using [Google API](https://aiyprojects.withgoogle.com/voice/#makers-guide-1-2--python-api-reference)  
 
 ## Setting up
-
-### virtualenv
-```python
-python -m venv .venv
-source .venv/bin/activate
-pip install upgrade --pip
-pip install requests  # todo confirmar necessidade
+Cloning and installing python dependencies using `poetry`:
+```commandline
+gti clone git@github.com:FelipeSBarros/DomesticEconomy.git
+cd DomesticEconomy
+poetry install
 ```
 
 ### Data base
+Set database URL on `.env` file:
+`DB_URL='sqlite:///gastos.db'`
 
-### creating database
+#### creating database
 
 ```python
 import os

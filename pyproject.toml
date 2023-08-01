@@ -16,6 +16,7 @@ telepot = "^12.7"
 python-dotenv = "^0.21.1"
 sqlalchemy = "^2.0.4"
 alembic = "^1.10.2"
+typing-extensions = "^4.7.1"
 
 
 [tool.poetry.group.dev.dependencies]
