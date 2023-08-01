@@ -38,48 +38,40 @@ cd DomesticEconomy
 poetry install
 ```
 
+
 ### Data base
 Set database URL on `.env` file:
-`DB_URL='sqlite:///gastos.db'`
+`dialect+driver://username:password@host:port/database`
 
-#### creating database
+#### creating database and adding initial data
 
 ```python
-import os
-from models import Base
-from dotenv import load_dotenv
-from sqlalchemy import create_engine
-
-
-load_dotenv()
-DB_NAME = os.getenv("DB_NAME")
-
-engine = create_engine(os.getenv("DB_URL"), echo=True)
-
-Base.metadata.create_all(engine)
+poetry run python fixtures.py
 ```
 
-* run [`python setup.py´](setup.py);
-* `sh Bot_run.sh`
+## Running chatbot:
+Provide the chatbot token 
+```python
+poetry run python economybot.py
+```
 
 ### About files and codes:  
   
-* **setup.py**: will create the database, tables and insert default values. 
+* **fixture.py**: will create the database, tables and insert initial values. 
 :warning: Take a look on it if you plan to adequate both category and subcategories to your reality;  
-* **dbhelper.py**: has all the functions related to the database: insert & retrieve data;  
+* ~~**dbhelper.py**: has all the functions related to the database: insert & retrieve data;~~  
 * **economybot.py**: is the bot it self. Mannage the text sent to bot and call the according functions;  
-* **Bot_run.sh**: a bash script to keep bot running even after it breaks;
-* **.env**: You must create this file where you should put the **bot key**, **user-email** & **email password**;  
- * **Key**: is needed to use the bot; Be careful to keep it save;  
- * **user-email** and **email password**: will be used on `/backup` function (see `/backup`) to send the database backup by e-mail;  
-This file should be like:  
+* ~~**Bot_run.sh**: a bash script to keep bot running even after it breaks;~~
+* **.env**: You must create this file where you should put the **`BOT_TOKEN`** and **`DB_URL`**;  
+ * **`BOT_TOKEN`**: is needed to use the bot; Be careful to keep it save;  
+ * ~~**user-email** and **email password**: will be used on `/backup` function (see `/backup`) to send the database backup by e-mail;~~
+ * **`DB_URL`**: Url to data base connection. See [SQLAlchemy Engine Configuration](https://docs.sqlalchemy.org/en/20/core/engines.html);
+
+ * This file should be like:  
 
 ```
 BOT_TOKEN = '12312312ADAsxlclncxca'
-PYANYWHERE_SECRET = "***********" # random number
-PYANYWHERE_USER = 'USER'
-email = 'your_email@host.com'
-password = 'your_password'
+DB_URL = 'dialect+driver://username:password@host:port/database'
 ```  
 
 ### chatbot Functions
